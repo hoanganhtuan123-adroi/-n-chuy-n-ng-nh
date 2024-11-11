@@ -194,6 +194,5 @@ public class CustomerView extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private DefaultTableModel tableModel;
     private CustomerController customerController;
-    private List<CustomerModel> customerList;
     // End of variables declaration//GEN-END:variables
 }

@@ -9,12 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerController {
-//    private CustomerModel model;
-//    private CustomerView view;
-//    public CustomerController(CustomerModel model, CustomerView view)  {
-//        this.model = model;
-//        this.view = view;
-//    }
 
     public List<CustomerModel> getAllCustomers() throws SQLException {
         List<CustomerModel> customer = new ArrayList<>();
@@ -52,6 +46,21 @@ public class CustomerController {
             System.out.println("id" + customerID);
             int rowsUpdated = pstmt.executeUpdate();
             System.out.println("rows updated: " + rowsUpdated);
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean deleteCustomer(int customerID) {
+        String query = "DELETE FROM customers WHERE customer_id = ?";
+
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, customerID);
+            int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("rows deleted: " + rowsUpdated);
             return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
