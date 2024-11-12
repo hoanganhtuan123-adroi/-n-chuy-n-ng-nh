@@ -268,7 +268,6 @@ public class CustomerUpdate extends javax.swing.JFrame {
         if(csController.updateCustomer(csModel, customerID)){
 
             JOptionPane.showMessageDialog(CustomerUpdate.this, "Cập nhật thành công!");
-
             customerView = new CustomerView();
             customerView.setVisible(true);
             dispose();

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import controller.CustomerController;
 import model.CustomerModel;
 import view.CustomerDetail;
 import view.CustomerUpdate;
@@ -81,7 +82,18 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
             @Override
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
-                JOptionPane.showMessageDialog(table, "Delete button clicked for row " + row);
+                if(row >= 0 ){
+                    Object customerIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
+                    int customerId = (customerIdObj instanceof Integer) ? (Integer) customerIdObj : Integer.parseInt(customerIdObj.toString());
+                    CustomerController customerController = new CustomerController();
+                    boolean isDeleted = customerController.deleteCustomer(customerId);
+                    if(isDeleted){
+                        JOptionPane.showMessageDialog(table, "Delete successful");
+                    } else {
+                        JOptionPane.showMessageDialog(table, "Delete fail ");
+                    }
+
+                }
             }
         });
     }

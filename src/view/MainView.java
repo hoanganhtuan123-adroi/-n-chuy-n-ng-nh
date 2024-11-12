@@ -34,6 +34,20 @@ public class MainView extends javax.swing.JFrame {
                 cs.setVisible(true);
             }
         });
+
+        btnTourMN.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                TourView tourView = null;
+                System.out.println("showTourMNView");
+                try {
+                    tourView = new TourView();
+                } catch (SQLException e){
+                    throw new RuntimeException(e);
+                }
+                tourView.setVisible(true);
+            }
+        });
+
     }
 
     /**
@@ -48,7 +62,7 @@ public class MainView extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         btnBookingPK = new javax.swing.JButton();
         btnCusMN = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnTourMN = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
@@ -64,7 +78,7 @@ public class MainView extends javax.swing.JFrame {
 
         btnCusMN.setText("Customer Management");
 
-        jButton3.setText("jButton1");
+        btnTourMN.setText("Tour Management");
 
         jButton4.setText("jButton1");
 
@@ -82,7 +96,7 @@ public class MainView extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(btnBookingPK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCusMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnTourMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -96,7 +110,7 @@ public class MainView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCusMN)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addComponent(btnTourMN)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -210,7 +224,7 @@ public class MainView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBookingPK;
     private javax.swing.JButton btnCusMN;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnTourMN;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
