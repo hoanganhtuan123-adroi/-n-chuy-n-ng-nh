@@ -173,7 +173,6 @@ public class TourController {
     }
 
     public boolean addNewTour(TourModel tour) throws SQLException {
-//        TourModel tour = tours;
         String query = "INSERT INTO tours (package_id, tour_name, description, duration, start_date, end_date, destination, departure_location, capacity, available_seats, prices, created_at, updated_at) \n" +
                 "VALUES(?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
         try(Connection con = DatabaseConnection.getConnection();

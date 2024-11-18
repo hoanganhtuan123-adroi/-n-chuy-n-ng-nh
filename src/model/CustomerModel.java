@@ -36,6 +36,30 @@ public class CustomerModel {
         this.account_id = account_id;
     }
 
+    public CustomerModel(int accountID, String name, String email, String phone, String address) {
+        this.account_id = accountID;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
+
+    public CustomerModel(String name, String email, String phone, String address) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
+
+    public CustomerModel(int id, int acId, String name, String email, String phone, String address) {
+        this.customer_id = id;
+        this.account_id = acId;
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+    }
+
     public int getAccount_id(){return account_id;};
 
     public void setAccount_id(int account_id){this.account_id = account_id;}

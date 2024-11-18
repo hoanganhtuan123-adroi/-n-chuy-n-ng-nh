@@ -11,6 +11,8 @@ import model.CustomerModel;
 import model.TourModel;
 import view.TourComponent.TourAddNew;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -31,6 +33,7 @@ public class TourView extends javax.swing.JFrame {
     public TourView() throws SQLException {
         tourController = new TourController();
         initComponents();
+        setVisible(true);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -52,38 +55,42 @@ public class TourView extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         btnSearch = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        btnAddNew = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Tour Management");
-        jTableModel = new DefaultTableModel(new Object [][] {
-                {null, null, null, null, null, null, null, null, null,null},
-                {null, null, null, null, null, null, null, null, null,null},
-                {null, null, null, null, null, null, null, null, null,null,},
-                {null, null, null, null, null, null, null, null, null,null}
+        jTableModel = new DefaultTableModel( new Object [][] {
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
         },
                 new String [] {
-                        "Tour ID ", "Package ID ", "Tour Name", "Destination ", "Start Date", "End Date", "Departure Location", "Price", "Package Name", "Action"
-                }) {
+                        "Tour ID ", "Package ID", "Tour Name", "Destination ", "Start Date", "End Date", "Departure Location", "Price   ", "Package Name", "Action"
+                }){
+
             boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
-            }};
-
-//        jTable1.setModel(jTableModel);
-
+            }
+        };
         jTable1.setModel(jTableModel);
+
         jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedTour(jTable1));
         jTable1.getColumn("Action").setCellEditor(new ButtonRenderedTour(jTable1));
+
+
         jTable1.setRowHeight(40);
 
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(20); // Tour ID
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(20); // Package ID
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(40); // Package ID
         jTable1.getColumnModel().getColumn(2).setPreferredWidth(180); // Tour Name
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(80); // Desti
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(80); // Start
@@ -93,7 +100,11 @@ public class TourView extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(8).setPreferredWidth(100); // PC_NAME
         jTable1.getColumnModel().getColumn(9).setPreferredWidth(200); // Action
 
+
         jScrollPane1.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(7).setResizable(false);
+        }
 
         jLabel2.setText("Search for:");
 
@@ -101,15 +112,10 @@ public class TourView extends javax.swing.JFrame {
 
         btnSearch.setText("Search");
 
-        btnAddNew = new javax.swing.JButton();
-        btnAddNew.setText("Add New");
-        btnAddNew.setFont(new java.awt.Font("Segoe UI", 1, 16)); // Đặt font cho nút
-        btnAddNew.setPreferredSize(new Dimension(120, 40)); // Kích thước của nút
+        btnAddNew.setText("ADD NEW");
 
-// Gắn sự kiện khi nhấn nút
-        btnAddNew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        btnAddNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TourAddNew tourAddNew = new TourAddNew();
                 tourAddNew.setVisible(true);
             }
@@ -128,25 +134,27 @@ public class TourView extends javax.swing.JFrame {
             }
         });
 
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(btnSearch)
-                    .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                            .addGap(222, 222, 222)
-                            .addComponent(jLabel1)
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(btnAddNew)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAddNew)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnSearch)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(222, 222, 222)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 645, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,13 +164,13 @@ public class TourView extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch))
-                    .addComponent(btnAddNew)
+                    .addComponent(btnSearch)
+                    .addComponent(jLabel3)
+                    .addComponent(btnAddNew))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -230,14 +238,14 @@ public class TourView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddNew;
     private javax.swing.JButton btnSearch;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private DefaultTableModel jTableModel;
-    private javax.swing.JButton btnAddNew;
-
     // End of variables declaration//GEN-END:variables
 }

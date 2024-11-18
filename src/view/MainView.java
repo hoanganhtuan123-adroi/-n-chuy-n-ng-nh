@@ -4,7 +4,9 @@
  */
 package view;
 
-import com.sun.tools.javac.Main;
+import view.CustomerComponent.CustomerView;
+import view.ServiceComponent.ServiceView;
+import view.employeeComponent.EmployeeView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,13 +26,14 @@ public class MainView extends javax.swing.JFrame {
 
         btnCusMN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                System.out.println("showCustomerView");
-                CustomerView cs = null;
+
+                CustomerView  cs = null;
                 try {
                     cs = new CustomerView();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
+
                 cs.setVisible(true);
             }
         });
@@ -38,16 +41,35 @@ public class MainView extends javax.swing.JFrame {
         btnTourMN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 TourView tourView = null;
-                System.out.println("showTourMNView");
                 try {
                     tourView = new TourView();
-                } catch (SQLException e){
+                    tourView.setVisible(true);
+                } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                tourView.setVisible(true);
+
             }
         });
 
+        btnService.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+              ServiceView serviceView = new ServiceView();
+              serviceView.setVisible(true);
+            }
+        });
+
+        btnEmployeeMN.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EmployeeView employeeView = null;
+                try {
+                    employeeView = new EmployeeView();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                employeeView.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -65,8 +87,8 @@ public class MainView extends javax.swing.JFrame {
         btnTourMN = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        btnService = new javax.swing.JButton();
+        btnEmployeeMN = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jPanel_content = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -84,9 +106,9 @@ public class MainView extends javax.swing.JFrame {
 
         jButton5.setText("jButton1");
 
-        jButton6.setText("jButton1");
+        btnService.setText("Service Management");
 
-        jButton7.setText("jButton1");
+        btnEmployeeMN.setText("Employee Management");
 
         jButton8.setText("jButton1");
 
@@ -99,8 +121,8 @@ public class MainView extends javax.swing.JFrame {
             .addComponent(btnTourMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnService, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnEmployeeMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -116,9 +138,9 @@ public class MainView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton6)
+                .addComponent(btnService)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton7)
+                .addComponent(btnEmployeeMN)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton8)
                 .addContainerGap(64, Short.MAX_VALUE))
@@ -224,11 +246,11 @@ public class MainView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBookingPK;
     private javax.swing.JButton btnCusMN;
+    private javax.swing.JButton btnEmployeeMN;
+    private javax.swing.JButton btnService;
     private javax.swing.JButton btnTourMN;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
