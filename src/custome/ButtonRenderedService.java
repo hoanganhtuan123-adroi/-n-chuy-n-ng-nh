@@ -1,5 +1,6 @@
 package custome;
 
+import controller.EmployeeController;
 import controller.ServiceController;
 import controller.TourController;
 import model.ServiceModel;
@@ -49,7 +50,6 @@ public class ButtonRenderedService extends AbstractCellEditor implements TableCe
                     // Lấy dữ liệu từ hàng đã chọn
                     Object serviceIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là serviceId
                     int serviceID = (serviceIdObj instanceof Integer) ? (Integer) serviceIdObj : Integer.parseInt(serviceIdObj.toString());
-                    System.out.println("service ID" + serviceID);
                     services = serviceController.getItemService(serviceID);
 
                     ServiceUpdate serviceUpdate = new ServiceUpdate(services);
@@ -62,7 +62,32 @@ public class ButtonRenderedService extends AbstractCellEditor implements TableCe
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("delete button clicked");
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Bạn có chắc chắn muốn xóa dữ liệu này?",
+                        "Xác nhận xóa",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if(result == JOptionPane.YES_OPTION){
+
+                    int row = table.getSelectedRow();
+                    if(row >= 0){
+                        Object serviceIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
+                        int serviceID = (serviceIdObj instanceof Integer) ? (Integer) serviceIdObj : Integer.parseInt(serviceIdObj.toString());
+                        try {
+                            boolean isDeleted = serviceController.deleteService(serviceID);
+                            if(isDeleted){
+                                JOptionPane.showMessageDialog(panel, "Employee deleted successfully");
+                            } else {
+                                JOptionPane.showMessageDialog(panel, "Unable to delete employee");
+                            }
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                }
+
             }
         });
    }

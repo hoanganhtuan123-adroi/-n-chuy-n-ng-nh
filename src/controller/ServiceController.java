@@ -13,54 +13,26 @@ import java.util.List;
 public class ServiceController {
     public List<ServiceModel> getAllService(){
         List<ServiceModel> serviceModels = new ArrayList<>();
-
-        //        SELECT
-//           ROW_NUMBER() OVER AS  serviceID,
-//            s.service_id,
-//            s.service_name,
-//            s.description,
-//            p.package_name,
-//            supp.supplier_name,
-//            ps.included
-//        FROM services s
-//        LEFT JOIN package_services ps ON s.service_id = ps.service_id
-//        LEFT JOIN packages p ON ps.package_id = p.package_id
-//        LEFT JOIN supplier_services ss ON s.service_id = ss.service_id
-//        LEFT JOIN suppliers supp ON ss.supplier_id = supp.supplier_id
-//        ORDER BY s.service_id;
-
         String query = """
         SELECT 
-             s.serviceID,
-            s.service_id,
-            s.service_name,
-            s.description,
-            p.package_name,
-            supp.supplier_name,
-            ps.included
-        FROM new_table_service s
-        LEFT JOIN package_services ps ON s.service_id = ps.service_id
-        LEFT JOIN packages p ON ps.package_id = p.package_id
-        LEFT JOIN supplier_services ss ON s.service_id = ss.service_id
-        LEFT JOIN suppliers supp ON ss.supplier_id = supp.supplier_id
-        ORDER BY s.serviceID;
-      
+             s.service_id, s.service_name, s.description, sup.supplier_name, p.package_name
+        FROM services AS s
+        LEFT JOIN suppliers AS sup ON s.supplier_id = sup.supplier_id
+        LEFT JOIN packages AS p ON s.package_id = p.package_id 
+        ORDER BY s.service_id;
     """;
-
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query);
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                System.out.println(rs.getString("serviceID"));
-                int serviceId = rs.getInt("serviceID");
+                int serviceId = rs.getInt("service_id");
                 String serviceName = rs.getString("service_name");
                 String description = rs.getString("description");
                 String packageName = rs.getString("package_name");
                 String supplierName = rs.getString("supplier_name");
-                boolean included = rs.getBoolean("included");
 
-                serviceModels.add(new ServiceModel(serviceId, serviceName, description, packageName, supplierName, included));
+                serviceModels.add(new ServiceModel(serviceId, serviceName, description, packageName, supplierName));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -100,9 +72,8 @@ public class ServiceController {
                 String description = rs.getString("description");
                 String packageName = rs.getString("package_name");
                 String supplierName = rs.getString("supplier_name");
-                boolean included = rs.getBoolean("included");
 
-                ServiceModel service = new ServiceModel(serviceId, serviceNameResult, description, packageName, supplierName, included);
+                ServiceModel service = new ServiceModel(serviceId, serviceNameResult, description, packageName, supplierName);
                 services.add(service);
             }
         }
@@ -112,20 +83,11 @@ public class ServiceController {
     public ServiceModel getItemService(int serviceID){
         ServiceModel serviceModels = null;
         String query = """
-        SELECT * FROM (SELECT 
-            ROW_NUMBER() OVER() AS serviceID,
-            s.service_id,
-            s.service_name,
-            s.description,
-            p.package_name,
-            supp.supplier_name,
-            ps.included
-        FROM services s
-        LEFT JOIN package_services ps ON s.service_id = ps.service_id
-        LEFT JOIN packages p ON ps.package_id = p.package_id
-        LEFT JOIN supplier_services ss ON s.service_id = ss.service_id
-        LEFT JOIN suppliers supp ON ss.supplier_id = supp.supplier_id
-        ORDER BY s.service_id) AS subquery WHERE serviceID = ?;
+        SELECT s.service_id, s.service_name, s.description, sup.supplier_name, p.package_name
+        FROM services AS s 
+        LEFT JOIN suppliers AS sup ON s.supplier_id = sup.supplier_id
+        LEFT JOIN packages AS p ON s.package_id = p.package_id
+        WHERE service_id = ?;
     """;
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query);)
@@ -133,13 +95,12 @@ public class ServiceController {
             pstmt.setInt(1, serviceID);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                int serviceId = rs.getInt("serviceID");
+                int serviceId = rs.getInt("service_id");
                 String serviceName = rs.getString("service_name");
                 String description = rs.getString("description");
                 String packageName = rs.getString("package_name");
                 String supplierName = rs.getString("supplier_name");
-                boolean included = rs.getBoolean("included");
-                serviceModels = new ServiceModel(serviceId, serviceName, description, packageName, supplierName,included);
+                serviceModels = new ServiceModel(serviceId, serviceName, description, packageName, supplierName);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -149,25 +110,13 @@ public class ServiceController {
 
     }
 
+
     public boolean updateService(ServiceModel svModel) {
-        String sql = "UPDATE services AS s " +
-                "JOIN ( " +
-                "    SELECT " +
-                "        s.service_id, " +
-                "        ? AS new_service_name, " + // Tham số 1
-                "        ? AS new_description " + // Tham số 2
-                "        ? AS new_service_supplier, " + // Tham số 3
-                "        ? AS new_service_package " + // Tham số 4
-                "    FROM services s " +
-                "    LEFT JOIN package_services ps ON s.service_id = ps.service_id " +
-                "    LEFT JOIN packages p ON ps.package_id = p.package_id " +
-                "    LEFT JOIN supplier_services ss ON s.service_id = ss.service_id " +
-                "    LEFT JOIN suppliers supp ON ss.supplier_id = supp.supplier_id " +
-                "    WHERE s.service_id = ? " + // Tham số 5
-                ") AS subquery ON s.service_id = subquery.service_id " +
-                "SET " +
-                "    s.service_name = subquery.new_service_name, " +
-                "    s.description = subquery.new_description;";
+        String sql ="update services as s\n" +
+                "join packages as p on p.package_id = s.package_id\n" +
+                "join suppliers as sup on sup.supplier_id = s.supplier_id\n" +
+                "set s.service_name = ?, s.description =?, sup.supplier_name = ?, p.package_name = ?\n" +
+                "where s.service_id = ?;";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -187,4 +136,14 @@ public class ServiceController {
             return false;
         }
     };
+
+    public boolean deleteService(int serviceID) throws SQLException {
+        String query = "DELETE FROM services WHERE service_id = ?";
+        try(Connection con = DatabaseConnection.getConnection();
+        PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, serviceID);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        }
+    }
 }

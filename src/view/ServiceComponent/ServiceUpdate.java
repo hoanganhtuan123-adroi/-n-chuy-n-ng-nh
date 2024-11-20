@@ -244,7 +244,7 @@ public class ServiceUpdate extends javax.swing.JFrame {
         String service_description = jServiceDescription.getText();
         String service_supplier = jServiceSupplier.getText();
         String service_package = jServicePackage.getText();
-        ServiceModel serviceModel = new ServiceModel(service_id,service_name,service_description,service_package,service_supplier,true);
+        ServiceModel serviceModel = new ServiceModel(service_id,service_name,service_description,service_package,service_supplier);
         ServiceController svController = new ServiceController();
         if(svController.updateService(serviceModel)){
             JOptionPane.showMessageDialog(ServiceUpdate.this, "Updated success!");

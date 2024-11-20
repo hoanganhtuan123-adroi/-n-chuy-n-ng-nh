@@ -7,13 +7,12 @@ public class ServiceModel {
     private String serviceSupplier;
     private String servicePackageName;
     private boolean included;
-    public ServiceModel(int serviceId, String serviceName, String serviceDescription, String servicePackageName, String serviceSupplier, boolean included) {
+    public ServiceModel(int serviceId, String serviceName, String serviceDescription, String servicePackageName, String serviceSupplier) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.serviceDescription = serviceDescription;
         this.servicePackageName = servicePackageName;
         this.serviceSupplier = serviceSupplier;
-        this.included = included;
     }
 
     public int getServiceId() {

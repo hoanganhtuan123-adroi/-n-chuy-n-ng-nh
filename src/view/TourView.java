@@ -70,7 +70,7 @@ public class TourView extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null}
         },
                 new String [] {
-                        "Tour ID ", "Package ID", "Tour Name", "Destination ", "Start Date", "End Date", "Departure Location", "Price   ", "Package Name", "Action"
+                        "Tour ID ", "Package ID", "Tour Name", "Destination ", "Start Date", "End Date", "Departure Location", "Price", "Package Name", "Action"
                 }){
 
             boolean[] canEdit = new boolean [] {

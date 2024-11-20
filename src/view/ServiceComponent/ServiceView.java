@@ -6,7 +6,6 @@ package view.ServiceComponent;
 
 import controller.ServiceController;
 import custome.ButtonRenderedService;
-import custome.ButtonRenderedTour;
 import model.ServiceModel;
 
 import javax.swing.*;
@@ -77,8 +76,6 @@ public class ServiceView extends javax.swing.JFrame {
         };
         jTable1.setModel(jTableModel);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedService(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedService(jTable1));
         jTable1.setRowHeight(40);
 
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(20); // Service ID
@@ -87,6 +84,9 @@ public class ServiceView extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(80); // Supplier
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(100); // Package Name
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(150); // Action
+
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedService(jTable1));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedService(jTable1));
 
         jScrollPane1.setViewportView(jTable1);
 

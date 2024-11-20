@@ -5,6 +5,7 @@
 package view;
 
 import view.CustomerComponent.CustomerView;
+import view.IssuesComponent.IssuesView;
 import view.ServiceComponent.ServiceView;
 import view.employeeComponent.EmployeeView;
 
@@ -70,6 +71,19 @@ public class MainView extends javax.swing.JFrame {
                 employeeView.setVisible(true);
             }
         });
+
+        btnIssues.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                IssuesView issuesView = null;
+                try {
+                    issuesView = new IssuesView();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                issuesView.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -85,11 +99,11 @@ public class MainView extends javax.swing.JFrame {
         btnBookingPK = new javax.swing.JButton();
         btnCusMN = new javax.swing.JButton();
         btnTourMN = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnSupplier = new javax.swing.JButton();
+        btnPayment = new javax.swing.JButton();
         btnService = new javax.swing.JButton();
         btnEmployeeMN = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        btnIssues = new javax.swing.JButton();
         jPanel_content = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -102,15 +116,15 @@ public class MainView extends javax.swing.JFrame {
 
         btnTourMN.setText("Tour Management");
 
-        jButton4.setText("jButton1");
+        btnSupplier.setText("Supplier Management");
 
-        jButton5.setText("jButton1");
+        btnPayment.setText("Payment Management");
 
         btnService.setText("Service Management");
 
         btnEmployeeMN.setText("Employee Management");
 
-        jButton8.setText("jButton1");
+        btnIssues.setText("Issues Management");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -119,11 +133,11 @@ public class MainView extends javax.swing.JFrame {
             .addComponent(btnBookingPK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCusMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnTourMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnSupplier, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnPayment, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnService, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnEmployeeMN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnIssues, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -134,15 +148,15 @@ public class MainView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTourMN)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                .addComponent(btnSupplier)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5)
+                .addComponent(btnPayment)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnService)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEmployeeMN)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton8)
+                .addComponent(btnIssues)
                 .addContainerGap(64, Short.MAX_VALUE))
         );
 
@@ -247,11 +261,11 @@ public class MainView extends javax.swing.JFrame {
     private javax.swing.JButton btnBookingPK;
     private javax.swing.JButton btnCusMN;
     private javax.swing.JButton btnEmployeeMN;
+    private javax.swing.JButton btnIssues;
+    private javax.swing.JButton btnPayment;
     private javax.swing.JButton btnService;
+    private javax.swing.JButton btnSupplier;
     private javax.swing.JButton btnTourMN;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
