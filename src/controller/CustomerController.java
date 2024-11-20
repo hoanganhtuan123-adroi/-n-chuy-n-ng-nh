@@ -2,7 +2,7 @@ package controller;
 
 import database.DatabaseConnection;
 import model.CustomerModel;
-import view.CustomerView;
+import model.EmployeeModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -67,4 +67,66 @@ public class CustomerController {
         }
         return false;
     }
+
+    public boolean addCustomer(CustomerModel customer) {
+        String query = "INSERT INTO accounts(username, password, email, phone, role, status) VALUES(?,'123456', ?,?, 'customer', 'active')";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement acc_pstmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            con.setAutoCommit(false);
+            acc_pstmt.setString(1, customer.getCustomer_name().replaceAll(" ", "").toLowerCase()+"account");
+            acc_pstmt.setString(2, customer.getEmail());
+            acc_pstmt.setString(3, customer.getPhone());
+            acc_pstmt.executeUpdate();
+
+            ResultSet rs = acc_pstmt.getGeneratedKeys();
+            int account_id = 0;
+            if (rs.next()) {
+                account_id = rs.getInt(1);
+            }
+
+            String customer_query = "INSERT INTO customers (account_id, name, email, phone, address)\n" +
+                    "VALUES(?,?,?,?,?)";
+            try (PreparedStatement cus_pstmt = con.prepareStatement(customer_query)) {
+                cus_pstmt.setInt(1, account_id);
+                cus_pstmt.setString(2, customer.getCustomer_name());
+                cus_pstmt.setString(3, customer.getEmail());
+                cus_pstmt.setString(4, customer.getPhone());
+                cus_pstmt.setString(5, customer.getAddress());
+                int row = cus_pstmt.executeUpdate();
+
+                con.setAutoCommit(true);
+                return row > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<CustomerModel> searchCustomerByFullName(String fullNameSearch) {
+        List<CustomerModel> listCustomer = new ArrayList<>();
+        String query = "SELECT customer_id, account_id, name, email, phone, address FROM customers WHERE name LIKE ?; ";
+        try (Connection con = DatabaseConnection.getConnection();
+             PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setString(1, "%" + fullNameSearch + "%");
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("customer_id");
+                    int ac_id = rs.getInt("account_id");
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String phone = rs.getString("phone");
+                    String address = rs.getString("address");
+                    CustomerModel customer = new CustomerModel(id, ac_id, name, email,phone, address);
+                    listCustomer.add(customer);
+                }
+                con.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return listCustomer;
+    }
+
 }

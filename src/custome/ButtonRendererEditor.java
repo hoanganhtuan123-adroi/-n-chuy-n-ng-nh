@@ -5,12 +5,14 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.List;
 
 import controller.CustomerController;
+import controller.EmployeeController;
 import model.CustomerModel;
-import view.CustomerDetail;
-import view.CustomerUpdate;
+import view.CustomerComponent.CustomerDetail;
+import view.CustomerComponent.CustomerUpdate;
 
 public class ButtonRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
     private List<CustomerModel> customersList;
@@ -59,7 +61,6 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
             @Override
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
-                JOptionPane.showMessageDialog(table, "Update button clicked for row " + row);
                 if (row >= 0) {
 //                    int customerId = customer.getCustomer_id();
                     // Lấy dữ liệu từ hàng đã chọn
@@ -81,20 +82,30 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                if(row >= 0 ){
-                    Object customerIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
-                    int customerId = (customerIdObj instanceof Integer) ? (Integer) customerIdObj : Integer.parseInt(customerIdObj.toString());
-                    CustomerController customerController = new CustomerController();
-                    boolean isDeleted = customerController.deleteCustomer(customerId);
-                    if(isDeleted){
-                        JOptionPane.showMessageDialog(table, "Delete successful");
-                    } else {
-                        JOptionPane.showMessageDialog(table, "Delete fail ");
-                    }
 
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Bạn có chắc chắn muốn xóa dữ liệu này?",
+                        "Xác nhận xóa",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if(result == JOptionPane.YES_OPTION){
+                    CustomerController customerController = new CustomerController();
+                    int row = table.getSelectedRow();
+                    if(row >= 0){
+                        Object customerIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
+                        int customerId = (customerIdObj instanceof Integer) ? (Integer) customerIdObj : Integer.parseInt(customerIdObj.toString());
+                        boolean isDeleted = customerController.deleteCustomer(customerId);
+
+                        if(isDeleted){
+                            JOptionPane.showMessageDialog(table, "Delete successful");
+                        } else {
+                            JOptionPane.showMessageDialog(table, "Delete fail ");
+                        }
+                    }
                 }
-            }
+                }
         });
     }
 

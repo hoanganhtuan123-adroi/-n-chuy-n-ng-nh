@@ -5,14 +5,10 @@
 package projecttourmanagement;
 
 import controller.AuthController;
-import controller.CustomerController;
-import database.DatabaseConnection;
 
 import java.sql.*;
 
 import model.AccountModel;
-import model.CustomerModel;
-import view.CustomerView;
 import view.LoginView;
 import view.MainView;
 
