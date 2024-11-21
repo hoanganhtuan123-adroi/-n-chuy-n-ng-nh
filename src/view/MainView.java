@@ -6,7 +6,9 @@ package view;
 
 import view.CustomerComponent.CustomerView;
 import view.IssuesComponent.IssuesView;
+import view.PaymentComponent.PaymentView;
 import view.ServiceComponent.ServiceView;
+import view.SupplierComponent.SupplierView;
 import view.employeeComponent.EmployeeView;
 
 import java.awt.event.ActionEvent;
@@ -82,6 +84,32 @@ public class MainView extends javax.swing.JFrame {
                     throw new RuntimeException(ex);
                 }
                 issuesView.setVisible(true);
+            }
+        });
+
+        btnSupplier.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SupplierView supplierView = null;
+                try {
+                    supplierView = new SupplierView();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                supplierView.setVisible(true);
+            }
+        });
+
+        btnPayment.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PaymentView paymentView = null;
+                try {
+                    paymentView = new PaymentView();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                paymentView.setVisible(true);
             }
         });
     }

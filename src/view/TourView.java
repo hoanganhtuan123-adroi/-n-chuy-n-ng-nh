@@ -6,15 +6,10 @@ package view;
 
 import controller.TourController;
 import custome.ButtonRenderedTour;
-import custome.ButtonRendererEditor;
-import model.CustomerModel;
 import model.TourModel;
 import view.TourComponent.TourAddNew;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
