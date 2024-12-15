@@ -1,12 +1,8 @@
 package custome;
 
 import controller.IssueController;
-import controller.ServiceController;
 import model.IssueModel;
-import model.ServiceModel;
-import model.TourModel;
 import view.IssuesComponent.IssueUpdate;
-import view.ServiceComponent.ServiceUpdate;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -14,61 +10,82 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.util.List;
 
 public class ButtonRenderedIssues extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
 
-    private List<TourModel> tourList;
     private JPanel panel;
     private JButton updateButton;
     private JTable table;
-    private ServiceController serviceController;
 
-    public ButtonRenderedIssues(JTable table){
+    public ButtonRenderedIssues(JTable table) {
         this.table = table;
-        this.serviceController = new ServiceController();
-        panel = new JPanel(new FlowLayout());
 
-        // Create buttons
+        // Tạo panel chứa các nút
+        panel = new JPanel(new FlowLayout());
         updateButton = new JButton("Update");
 
-        // Add buttons to panel
+        // Thêm nút vào panel
         panel.add(updateButton);
 
-
+        // Xử lý sự kiện khi nhấn nút Update
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-                    IssueModel issues = null;
-                    Object issueIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là serviceId
-                    int issueID = (issueIdObj instanceof Integer) ? (Integer) issueIdObj : Integer.parseInt(issueIdObj.toString());
-                    issues = IssueController.getIssueById(issueID);
-                    IssueUpdate issueUpdate = new IssueUpdate(issues);
-                    issueUpdate.setVisible(true);
+                    try {
+                        // Lấy ID từ cột đầu tiên (giả sử chứa Issue ID)
+                        Object issueIdObj = table.getValueAt(row, 0);
+                        if (issueIdObj == null) {
+                            JOptionPane.showMessageDialog(null, "Issue ID is missing!");
+                            return;
+                        }
+
+                        // Chuyển đổi Issue ID sang kiểu Integer
+                        int issueID = (issueIdObj instanceof Integer) ? (Integer) issueIdObj : Integer.parseInt(issueIdObj.toString());
+
+                        // Lấy thông tin Issue từ controller
+                        IssueModel issues = IssueController.getIssueById(issueID);
+                        if (issues == null) {
+                            JOptionPane.showMessageDialog(null, "Issue not found!");
+                            return;
+                        }
+
+                        // Mở giao diện cập nhật Issue
+                        IssueUpdate issueUpdate = new IssueUpdate(issues);
+                        issueUpdate.setVisible(true);
+
+                        // Dừng chỉnh sửa để cập nhật bảng
+                        fireEditingStopped();
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
                 }
             }
-
         });
-
-
-   }
-
+    }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        panel.setBackground(table.getSelectionBackground()); // Cập nhật màu nền khi được chọn
         return panel;
     }
 
     @Override
     public Object getCellEditorValue() {
+        // Không gọi fireEditingStopped() ở đây để tránh vòng lặp
         return null;
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (isSelected) {
+            panel.setBackground(table.getSelectionBackground());
+        } else {
+            panel.setBackground(table.getBackground());
+        }
         return panel;
     }
 }

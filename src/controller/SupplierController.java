@@ -85,6 +85,8 @@ public class SupplierController {
     }
 
     public boolean updateSupplier(SupplierModel supplier){
+        System.out.println("Check ID >>>>" + supplier.getSupplierId());
+        System.out.println("Check supplier name >>>>" + supplier.getSupplierName());
         boolean isSuccess = false;
         String query = "update suppliers set supplier_name =?, contact_name =?, contact_email =?, contact_phone =?, address =?, service_type=?, description=? where supplier_id = ?;";
         try (Connection con = DatabaseConnection.getConnection();
@@ -125,11 +127,61 @@ public class SupplierController {
         }
     }
 
-    public List<SupplierModel> searchSupplier(String searchText){
+    public List<SupplierModel> searchSupplierByName(String searchText){
         List<SupplierModel> listSuppliers = new ArrayList<>();
         String query = "SELECT * FROM suppliers WHERE supplier_name LIKE ?";
         try(Connection con = DatabaseConnection.getConnection();
         PreparedStatement pstm = con.prepareStatement(query)){
+            pstm.setString(1, "%"+searchText+"%");
+            ResultSet rs = pstm.executeQuery();
+            while(rs.next()){
+                int id = rs.getInt("supplier_id");
+                String supplierName = rs.getString("supplier_name");
+                String contactName = rs.getString("contact_name");
+                String contactEmail = rs.getString("contact_email");
+                String contactPhone = rs.getString("contact_phone");
+                String address = rs.getString("address");
+                String serviceType = rs.getString("service_type");
+                String description = rs.getString("description");
+                listSuppliers.add(new SupplierModel(id, supplierName, contactName, contactEmail, contactPhone, address, serviceType, description));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return listSuppliers;
+    }
+
+    public List<SupplierModel> searchSupplierByEmail(String searchText){
+        List<SupplierModel> listSuppliers = new ArrayList<>();
+        String query = "SELECT * FROM suppliers WHERE contact_email LIKE ?";
+        try(Connection con = DatabaseConnection.getConnection();
+            PreparedStatement pstm = con.prepareStatement(query)){
+            pstm.setString(1, "%"+searchText+"%");
+            ResultSet rs = pstm.executeQuery();
+            while(rs.next()){
+                int id = rs.getInt("supplier_id");
+                String supplierName = rs.getString("supplier_name");
+                String contactName = rs.getString("contact_name");
+                String contactEmail = rs.getString("contact_email");
+                String contactPhone = rs.getString("contact_phone");
+                String address = rs.getString("address");
+                String serviceType = rs.getString("service_type");
+                String description = rs.getString("description");
+                listSuppliers.add(new SupplierModel(id, supplierName, contactName, contactEmail, contactPhone, address, serviceType, description));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        return listSuppliers;
+    }
+
+    public List<SupplierModel> searchSupplierByService(String searchText){
+        List<SupplierModel> listSuppliers = new ArrayList<>();
+        String query = "SELECT * FROM suppliers WHERE service_type LIKE ?";
+        try(Connection con = DatabaseConnection.getConnection();
+            PreparedStatement pstm = con.prepareStatement(query)){
             pstm.setString(1, "%"+searchText+"%");
             ResultSet rs = pstm.executeQuery();
             while(rs.next()){

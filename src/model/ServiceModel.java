@@ -6,13 +6,29 @@ public class ServiceModel {
     private String serviceDescription;
     private String serviceSupplier;
     private String servicePackageName;
-    private boolean included;
+    private int packageId;
     public ServiceModel(int serviceId, String serviceName, String serviceDescription, String servicePackageName, String serviceSupplier) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.serviceDescription = serviceDescription;
         this.servicePackageName = servicePackageName;
         this.serviceSupplier = serviceSupplier;
+    }
+
+    public ServiceModel(int serviceId, String serviceName, String serviceDescription, int packageId, String serviceSupplier) {
+        this.serviceId = serviceId;
+        this.serviceName = serviceName;
+        this.serviceDescription = serviceDescription;
+        this.packageId = packageId;
+        this.serviceSupplier = serviceSupplier;
+    }
+
+    public int getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(int packageId) {
+        this.packageId = packageId;
     }
 
     public int getServiceId() {

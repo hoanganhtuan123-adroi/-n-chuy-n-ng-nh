@@ -8,6 +8,7 @@ import controller.SupplierController;
 import model.SupplierModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -19,16 +20,48 @@ import java.sql.SQLException;
 public class SupplierUpdate extends javax.swing.JFrame {
     private SupplierModel supplierModel;
     private SupplierController supplierController;
+    private SupplierView supplierView;
     /**
      * Creates new form SupplierView
      */
-    public SupplierUpdate(SupplierModel supplierModel) {
+    public SupplierUpdate(SupplierModel supplierModel,SupplierView supplierView ) {
         this.supplierModel = supplierModel;
+        this.supplierView = supplierView;
         this.supplierController = new SupplierController();
         initComponents();
+        renderData();
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        btnclose.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
+        btnUpdate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    updateSupplier();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        btnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    handleDelete();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,50 +76,40 @@ public class SupplierUpdate extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jSupplierName = new javax.swing.JTextField();
-        jSupplierName.setText(supplierModel.getSupplierName());
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jContactName = new javax.swing.JTextField();
-        jContactName.setText(supplierModel.getContactName());
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jContactEmail = new javax.swing.JTextField();
-        jContactEmail.setText(supplierModel.getContactEmail());
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jContactPhone = new javax.swing.JTextField();
-        jContactPhone.setText(supplierModel.getContactPhone());
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jAddress = new javax.swing.JTextField();
-        jAddress.setText(supplierModel.getAddress());
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jAddress = new javax.swing.JTextArea();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jServiceType = new javax.swing.JTextField();
-        jServiceType.setText(supplierModel.getServiceType());
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jDescription = new javax.swing.JTextArea();
-        jDescription.setText(supplierModel.getDescription());
-        jDescription.setWrapStyleWord(true);
-        jDescription.setLineWrap(true);
         btnclose = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jSupplierID = new javax.swing.JTextField();
-        jSupplierID.setEditable(false);
-        jSupplierID.setText(String.valueOf(supplierModel.getSupplierId()));
-
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Supplier Update");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Cập nhập nhà cung cấp");
 
-        jLabel2.setText("Supplier Name");
+        jLabel2.setText("Nhà cung cấp");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -109,7 +132,7 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel3.setText("Contact Name");
+        jLabel3.setText("Người đại diện");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -117,8 +140,8 @@ public class SupplierUpdate extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
-                .addGap(32, 32, 32)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jContactName, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -132,14 +155,15 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel4.setText("Contact Email");
+        jLabel4.setText("Email");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel4)
+                .addContainerGap()
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38)
                 .addComponent(jContactEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                 .addContainerGap())
@@ -154,7 +178,7 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel5.setText("Contact Phone");
+        jLabel5.setText("Số điện thoại");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -177,7 +201,11 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel6.setText("Address");
+        jLabel6.setText("Địa chỉ");
+
+        jAddress.setColumns(20);
+        jAddress.setRows(5);
+        jScrollPane2.setViewportView(jAddress);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -187,20 +215,21 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel6)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 9, Short.MAX_VALUE))
         );
 
-        jLabel7.setText("Service Type");
+        jLabel7.setText("Loại dịch vụ");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -223,7 +252,7 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel8.setText("Description");
+        jLabel8.setText("Mô tả");
 
         jDescription.setColumns(20);
         jDescription.setRows(5);
@@ -251,9 +280,9 @@ public class SupplierUpdate extends javax.swing.JFrame {
         );
 
         btnclose.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnclose.setText("Close");
+        btnclose.setText("Đóng");
 
-        jLabel9.setText("Supplier ID");
+        jLabel9.setText("Mã nhà cung cấp");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -261,8 +290,8 @@ public class SupplierUpdate extends javax.swing.JFrame {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSupplierID, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -277,41 +306,11 @@ public class SupplierUpdate extends javax.swing.JFrame {
         );
 
         btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnUpdate.setText("Update");
-        btnUpdate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    updateSupplier();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDelete.setText("Delete");
-        btnDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(
-                        null,
-                        "Bạn có chắc chắn muốn xóa dữ liệu này?",
-                        "Xác nhận xóa",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                );
-                if(result == JOptionPane.YES_OPTION){
-                    String id = jSupplierID.getText();
-                    boolean isDelete = supplierController.deleteSupplier(Integer.valueOf(id));
-                    if(isDelete){
-                        JOptionPane.showMessageDialog(SupplierUpdate.this, "Tour deleted successfully");
-                    } else {
-                        JOptionPane.showMessageDialog(SupplierUpdate.this, "Unable to delete tour");
-                    }
-                }
+        btnUpdate.setText("Cập nhập");
 
-            }
-        });
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDelete.setText("Xóa");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -335,23 +334,19 @@ public class SupplierUpdate extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(0, 12, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(229, 229, 229))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnclose, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(123, 123, 123))))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(125, 125, 125)
+                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnclose, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -364,23 +359,23 @@ public class SupplierUpdate extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnclose, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
-                .addGap(20, 20, 20))
+                .addGap(28, 28, 28))
         );
 
         pack();
@@ -388,24 +383,66 @@ public class SupplierUpdate extends javax.swing.JFrame {
 
     public void updateSupplier() throws SQLException {
         String supplierID = jSupplierID.getText().trim();
+        String supplierName = jSupplierName.getText().trim();
         String contactName = jContactName.getText().trim();
         String contactEmail = jContactEmail.getText().trim();
         String contactPhone = jContactPhone.getText().trim();
         String address = jAddress.getText().trim();
         String serviceType = jServiceType.getText().trim();
         String description = jDescription.getText().trim();
-        supplierModel = new SupplierModel(supplierID, contactName, contactEmail, contactPhone,address,serviceType,description);
-        boolean isUpdate = supplierController.updateSupplier(supplierModel);
-        if(isUpdate){
-            JOptionPane.showMessageDialog(SupplierUpdate.this, "Updated Success!");
-            dispose();
-            SupplierView supplierView = new SupplierView();
-            supplierView.setVisible(true);
+        if(supplierID.isBlank() || supplierName.isBlank() || contactName.isBlank() || contactEmail.isBlank() || contactPhone.isBlank() ||
+        address.isBlank() || serviceType.isBlank() || description.isBlank()) {
+            JOptionPane.showMessageDialog(SupplierUpdate.this, "Vui lòng điền đẩy đủ thông tin!");
         } else {
-            JOptionPane.showMessageDialog(SupplierUpdate.this, "Updated Fail!");
+            supplierModel = new SupplierModel(Integer.parseInt(supplierID), supplierName, contactName, contactEmail, contactPhone,address,serviceType,description);
+            boolean isUpdate = supplierController.updateSupplier(supplierModel);
+            if(isUpdate){
+                JOptionPane.showMessageDialog(SupplierUpdate.this, "Cập nhập thành công!");
+                supplierView.loadCustomerData();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(SupplierUpdate.this, "Cập nhập thất bại!");
+            }
         }
+
     }
 
+    public void renderData(){
+        jSupplierID.setText(String.valueOf(supplierModel.getSupplierId()));
+        jSupplierID.setEditable(false);
+        jSupplierName.setText(supplierModel.getSupplierName());
+        jContactName.setText(supplierModel.getContactName());
+        jContactEmail.setText(supplierModel.getContactEmail());
+        jContactPhone.setText(supplierModel.getContactPhone());
+        jServiceType.setText(supplierModel.getServiceType());
+        jDescription.setText(supplierModel.getDescription());
+        jDescription.setLineWrap(true);
+        jDescription.setWrapStyleWord(true);
+        jAddress.setText(supplierModel.getAddress());
+        jAddress.setLineWrap(true);
+        jAddress.setWrapStyleWord(true);
+    }
+
+    public void handleDelete() throws SQLException {
+        String supplierID = jSupplierID.getText().trim();
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                "Bạn có chắc chắn muốn xóa dữ liệu này?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+        if(result == JOptionPane.YES_OPTION){
+            boolean isDeleted = supplierController.deleteSupplier(Integer.parseInt(supplierID));
+            if(isDeleted){
+                JOptionPane.showMessageDialog(this, "Xóa  thành công!");
+                supplierView.loadCustomerData();
+            } else {
+                JOptionPane.showMessageDialog(this, "Không thể xóa tour này!");
+            }
+
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -460,7 +497,7 @@ public class SupplierUpdate extends javax.swing.JFrame {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JButton btnclose;
-    private javax.swing.JTextField jAddress;
+    private javax.swing.JTextArea jAddress;
     private javax.swing.JTextField jContactEmail;
     private javax.swing.JTextField jContactName;
     private javax.swing.JTextField jContactPhone;
@@ -483,6 +520,7 @@ public class SupplierUpdate extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jServiceType;
     private javax.swing.JTextField jSupplierID;
     private javax.swing.JTextField jSupplierName;

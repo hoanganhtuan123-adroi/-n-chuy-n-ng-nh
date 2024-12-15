@@ -9,6 +9,9 @@ import custome.ButtonRenderedPayment;
 import model.PaymentModel;
 import model.TourModel;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +24,7 @@ import java.util.List;
  */
 public class PaymentView extends javax.swing.JFrame {
     private PaymentController paymentController;
+
     /**
      * Creates new form PaymentView
      */
@@ -30,7 +34,46 @@ public class PaymentView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
         loadCustomerData();
-        
+
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PaymentAddNew paymentAddNew = null;
+                try {
+                    paymentAddNew = new PaymentAddNew(PaymentView.this);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                paymentAddNew.setVisible(true);
+            }
+        });
+
+        jSearch.getDocument().addDocumentListener(new DocumentListener()  {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchPayment();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchPayment();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchPayment();
+            }
+
+            public void searchPayment()  {
+                try {
+                    handleSearch();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+
     }
 
     /**
@@ -40,8 +83,7 @@ public class PaymentView extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
+    private void initComponents() throws SQLException {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jSearch = new javax.swing.JTextField();
@@ -53,45 +95,24 @@ public class PaymentView extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Payment Management");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Quản lý thanh toán");
 
-        jLabel2.setText("Search For");
+        jLabel2.setText("Nhập tên khách hàng");
 
-        btnSearch.setText("Search");
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String search = jSearch.getText();
-                try {
-                   List<PaymentModel> lists = paymentController.searchPaymentByCusName(search);
-                   setTableData(lists);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-        btnAdd.setText("Add New");
-        btnAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PaymentAddNew paymentAddNew = null;
-                try {
-                    paymentAddNew = new PaymentAddNew();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                paymentAddNew.setVisible(true);
-            }
-        });
-        tableModel = new DefaultTableModel(new Object [][] {
+        btnSearch.setText("Tìm kiếm");
+
+        btnAdd.setText("Thêm mới");
+
+        tableModel = new DefaultTableModel( new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
         },
                 new String [] {
-                        "Payment ID", "Customer Name", "Tour Name", "Payment Date", "Status", "Action"
-                }) {
+                        "Mã Thanh Toán", "Khách Hàng", "Tên Tour", "Ngày Thanh Toán", "Trạng Thái", "Action"
+                }){
             boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, true
             };
@@ -100,12 +121,13 @@ public class PaymentView extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         };
+
         jTable1.setModel(tableModel);
 
         jTable1.setRowHeight(45);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedPayment(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedPayment(jTable1));
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedPayment(jTable1, PaymentView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedPayment(jTable1, PaymentView.this));
 
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(30);
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(80);
@@ -123,9 +145,7 @@ public class PaymentView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -133,12 +153,9 @@ public class PaymentView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSearch)
-                        .addContainerGap())))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(149, 149, 149)
-                .addComponent(jLabel1)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(btnSearch)))
+                .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -155,10 +172,12 @@ public class PaymentView extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE))
         );
 
+
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setTableData(List<PaymentModel> payments) {
+    private void setTableData(List<PaymentModel> payments) {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         for (PaymentModel payment : payments) {
             Object[] row = {
@@ -166,17 +185,22 @@ public class PaymentView extends javax.swing.JFrame {
                     payment.getCustomerName(),
                     payment.getTourName(),
                     payment.getPaymentDate(),
-                    payment.getPaymentStatus()
+                    payment.getPaymentStatus(),
             };
             tableModel.addRow(row);
         }
     }
 
-    private void loadCustomerData() throws SQLException {
+    public void loadCustomerData() throws SQLException {
         List<PaymentModel> payments = paymentController.getAllPayment();
         setTableData(payments);
     }
 
+
+    private void handleSearch() throws SQLException {
+        String search = jSearch.getText();
+        setTableData(paymentController.searchPaymentByCusName(search));
+    }
 
     /**
      * @param args the command line arguments
@@ -221,6 +245,6 @@ public class PaymentView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jSearch;
     private javax.swing.JTable jTable1;
-    private DefaultTableModel tableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
     // End of variables declaration//GEN-END:variables
 }
