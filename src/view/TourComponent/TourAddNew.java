@@ -6,29 +6,33 @@ package view.TourComponent;
 
 import controller.TourController;
 import model.TourModel;
+import view.TourView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import static com.sun.java.accessibility.util.SwingEventMonitor.addDocumentListener;
-
 /**
  *
  * @author admin
  */
 public class TourAddNew extends javax.swing.JFrame {
-
+    private List<String> listPackage;
+    private TourController tourController;
+    private TourView tourView;
     /**
      * Creates new form TourAddNew
      */
-    public TourAddNew() {
+    public TourAddNew(TourView tourView) throws SQLException {
+        this.tourController = new TourController();
+        this.listPackage = tourController.getPackage();
+        this.tourView = tourView;
         initComponents();
+        renderPackage();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
     }
@@ -53,9 +57,7 @@ public class TourAddNew extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jBoxPackage = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
-        jStartDate = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
-        jEndDate = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jDescription = new javax.swing.JTextArea();
@@ -67,136 +69,113 @@ public class TourAddNew extends javax.swing.JFrame {
         btnSave = new javax.swing.JButton();
         jDuration = new javax.swing.JTextField();
         jCapacity = new javax.swing.JTextField();
+        jStartDate = new com.toedter.calendar.JDateChooser();
+        jEndDate = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Add New Tour");
+        jLabel1.setText("Thêm tour du lịch");
         jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jLabel2.setText("Package");
+        jLabel2.setText("Tên gói");
 
-        jLabel3.setText("Tour Name");
+        jLabel3.setText("Tên tour");
 
-        jLabel5.setText("Destination");
+        jLabel5.setText("Điểm đến");
 
-        jLabel6.setText("Departure Location");
+        jLabel6.setText("Điểm xuất phát");
 
-        jLabel4.setText("Description");
+        jLabel4.setText("Mô tả");
 
         jBoxPackage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Package 1", "Package 2", "Package 3" }));
 
-        jLabel12.setText("Start Date");
+        jLabel12.setText("Ngày đi");
 
-        jLabel13.setText("End Date");
+        jLabel13.setText("Ngày kết thúc");
 
-        jLabel14.setText("Duration");
+        jLabel14.setText("Thời gian tour");
 
         jDescription.setColumns(10);
         jDescription.setRows(5);
         jScrollPane2.setViewportView(jDescription);
 
-        jLabel15.setText("Capacity");
+        jLabel15.setText("Sức chứa");
 
-        jLabel16.setText("Available seats");
+        jLabel16.setText("Chỗ còn trống");
 
-        jLabel17.setText("Prices");
+        jLabel17.setText("Giá");
 
-        btnSave.setText("Save");
 
+        jStartDate.addPropertyChangeListener("date", listener);
+        jEndDate.addPropertyChangeListener("date", listener);
+
+        btnSave.setText("Thêm mới");
         btnSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int packageID = Integer.parseInt(jBoxPackage.getSelectedItem().toString().substring(8));
-                String tourName = jTourName.getText();
-                String destination = jDestination.getText();
-                String departureLocation = jDeparture.getText();
-                String description = jDescription.getText();
-                String startDate = jStartDate.getText();
-                String endDate = jEndDate.getText();
-                String duration = jDuration.getText();
-                String capacity = jCapacity.getText();
-                String seats = jSeats.getText();
-                String price = jPrice.getText();
-                TourModel tour = new TourModel(packageID,tourName, destination, departureLocation, description, startDate,endDate,duration,capacity, seats, price );
-                TourController tourController = new TourController();
                 try {
-                    boolean isAdd = tourController.addNewTour(tour);
-                    if(isAdd){
-                       JOptionPane.showMessageDialog(TourAddNew.this, "Add new tour successful");
-                        dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(TourAddNew.this, "Add new tour failed");
-                        dispose();
-                    }
+                    addNewTour();
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }
             }
         });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel12)
-                                .addGap(18, 18, 18)
-                                .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addGap(11, 11, 11))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addGap(64, 64, 64))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(jLabel2)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jBoxPackage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTourName, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(23, 23, 23)
-                        .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(54, 54, 54)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel13)
+                                    .addGap(22, 22, 22)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jEndDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jBoxPackage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTourName, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                                .addComponent(jStartDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel17)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel15))
                         .addGap(18, 18, 18)
-                        .addComponent(jPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jDeparture, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jCapacity)
+                                .addGap(3, 3, 3))
+                            .addComponent(jDestination)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(jDestination, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(18, 18, 18)
-                        .addComponent(jDeparture, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel15)
-                        .addGap(18, 18, 18)
-                        .addComponent(jCapacity, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel16)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jSeats, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(75, 75, 75))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel17)
+                            .addComponent(jLabel14))
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                            .addComponent(jDuration)
+                            .addComponent(jSeats))))
+                .addGap(47, 47, 47))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -205,17 +184,14 @@ public class TourAddNew extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(210, 210, 210)
                         .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(180, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
-                        .addComponent(jLabel4))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jLabel1)
                         .addGap(15, 15, 15)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -229,31 +205,38 @@ public class TourAddNew extends javax.swing.JFrame {
                             .addComponent(jDeparture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)
                             .addComponent(jTourName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(23, 23, 23)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel15)
+                                        .addComponent(jCapacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel16)
+                                        .addComponent(jSeats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(23, 23, 23)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel15)
-                                    .addComponent(jCapacity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel16)
-                                    .addComponent(jSeats, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17)
-                    .addComponent(jPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel14)
-                    .addComponent(jDuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(26, 26, 26)
+                                .addComponent(jLabel4)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel12)
+                                .addComponent(jLabel17)
+                                .addComponent(jPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel14)
+                            .addComponent(jDuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(btnSave)
                 .addGap(24, 24, 24))
@@ -263,6 +246,81 @@ public class TourAddNew extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 
+    
+
+    public void addNewTour() throws SQLException {
+        String packageName = jBoxPackage.getSelectedItem().toString();
+        String tourName = jTourName.getText().trim();
+        String description = jDescription.getText().trim();
+        Date startDate = jStartDate.getDate();
+        Date endDate = jEndDate.getDate();
+        String destination = jDestination.getText().trim();
+        String departure = jDeparture.getText().trim();
+        String capacity = jCapacity.getText().trim();
+        String price = jPrice.getText().trim();
+        String duration = jDuration.getText().trim();
+        String seats = jSeats.getText().trim();
+
+        if(packageName.isEmpty() || tourName.isEmpty() || description.isEmpty() || startDate.toString().isEmpty() ||
+        endDate.toString().isEmpty() || destination.isEmpty() || capacity.isEmpty() || price.isEmpty() || departure.isEmpty()
+                || duration.isEmpty() || seats.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin");
+        } else {
+            TourModel tourModel = new TourModel(packageName, tourName, description, startDate,endDate,destination,departure,
+                    Integer.valueOf(capacity),Integer.valueOf(price),Integer.valueOf(duration), Integer.valueOf(seats));
+            boolean isSuccess = tourController.addNewTour(tourModel);
+            if(isSuccess){
+                JOptionPane.showMessageDialog(this, "Thêm tour mới thành công!");dispose();
+                tourView.loadData();
+            }else {
+            JOptionPane.showMessageDialog(this,"Thêm tour mới thất bại!");
+            dispose();
+            }
+        }
+
+    }
+    
+    public void renderDuration() {
+    // Tạo một Timer để đợi 1 giây sau khi người dùng chọn ngày
+    Timer timer = new Timer(1000, e -> {
+        Date startDate = jStartDate.getDate();
+        Date endDate = jEndDate.getDate();
+        long result = 0;
+
+        // Kiểm tra xem cả hai ngày đều đã được chọn
+        if (startDate != null && endDate != null) {
+            long daysBetween = Math.abs(endDate.getTime() - startDate.getTime());
+            result = daysBetween / (24 * 60 * 60 * 1000);
+        }
+
+        // Hiển thị kết quả
+        jDuration.setText(String.valueOf(result));
+    });
+
+    // Bắt đầu timer nếu cả hai ngày đã được chọn
+    Date startDate = jStartDate.getDate();
+    Date endDate = jEndDate.getDate();
+    if (startDate != null && endDate != null) {
+        timer.start();
+    }
+}
+   
+
+    public void renderPackage(){
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+       for(String pack : listPackage){
+           model.addElement(pack);
+       }
+       jBoxPackage.setModel(model);
+    }
+    
+    PropertyChangeListener listener = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            // Gọi renderDuration() khi thuộc tính thay đổi
+            renderDuration();
+        }
+    };
 
 
     /**
@@ -293,64 +351,17 @@ public class TourAddNew extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TourAddNew().setVisible(true);
-            }
-        });
-    }
-
-//    // Phương thức tính toán duration
-//    private void calculateDuration() {
-//        String startDateStr = jStartDate.getText().trim();
-//        String endDateStr = jEndDate.getText().trim();
-//
-////        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
-////            jDuration.setText("");
-////            return;
-////        }
-//
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//        try {
-//            Date startDate = dateFormat.parse(startDateStr);
-//            Date endDate = dateFormat.parse(endDateStr);
-//
-//            // Tính toán số ngày giữa Start Date và End Date
-//            long differenceInMillies = endDate.getTime() - startDate.getTime();
-//
-//            // Nếu End Date nhỏ hơn Start Date, báo lỗi
-//            if (differenceInMillies < 0) {
-//                jDuration.setText("Invalid Dates");
-//                return;
-//            }
-//
-//            // Tính số ngày
-//            long durationInDays = differenceInMillies / (24 * 60 * 60 * 1000);
-//            jDuration.setText(String.valueOf(durationInDays));
-//        } catch (ParseException e) {
-//            jDuration.setText("Invalid Format");
-//        }
-//    }
-//
-//
-//    private void addDocumentListener(JTextField textField) {
-//        textField.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                calculateDuration();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                calculateDuration();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                calculateDuration();
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                try {
+//                    new TourAddNew().setVisible(true);
+//                } catch (SQLException e) {
+//                    throw new RuntimeException(e);
+//                }
 //            }
 //        });
-//    }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSave;
@@ -360,7 +371,7 @@ public class TourAddNew extends javax.swing.JFrame {
     private javax.swing.JTextArea jDescription;
     private javax.swing.JTextField jDestination;
     private javax.swing.JTextField jDuration;
-    private javax.swing.JTextField jEndDate;
+    private com.toedter.calendar.JDateChooser jEndDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -376,7 +387,7 @@ public class TourAddNew extends javax.swing.JFrame {
     private javax.swing.JTextField jPrice;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jSeats;
-    private javax.swing.JTextField jStartDate;
+    private com.toedter.calendar.JDateChooser jStartDate;
     private javax.swing.JTextField jTourName;
     // End of variables declaration//GEN-END:variables
 }

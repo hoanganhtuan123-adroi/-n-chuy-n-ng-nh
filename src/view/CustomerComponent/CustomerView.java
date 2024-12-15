@@ -5,6 +5,8 @@
 package view.CustomerComponent;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import custome.ButtonRendererEditor;
 import model.CustomerModel;
@@ -44,7 +46,7 @@ public class CustomerView extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() throws SQLException {
 
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -57,19 +59,19 @@ public class CustomerView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Customer Management");
+        jLabel1.setText("Quản lý khách hàng");
 
-        tableModel = new DefaultTableModel(new Object [][] {
+        tableModel = new DefaultTableModel( new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
         },
                 new String [] {
-                        "Customer ID", "Customer Name", "Email", "Phone", "Address", "Action"
-                }){
+                        "Mã khách hàng", "Tên khách hàng", "Email", "Số điện thoại", "Địa chỉ", "Action"
+                }) {
             boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, true
             };
@@ -81,13 +83,13 @@ public class CustomerView extends javax.swing.JFrame {
 
         jTable1.setModel(tableModel);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRendererEditor(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRendererEditor(jTable1));
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRendererEditor(jTable1, CustomerView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRendererEditor(jTable1, CustomerView.this));
 
-        jTable1.setFont(new Font("Segoe UI", Font.PLAIN, 16)); // Chỉnh font và kích thước chữ
+        jTable1.setFont(new Font("Segoe UI", Font.PLAIN, 14)); // Chỉnh font và kích thước chữ
         jTable1.setRowHeight(50);
 
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(20); // Customer ID
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(40); // Customer ID
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(80); // Customer Name
         jTable1.getColumnModel().getColumn(2).setPreferredWidth(130); // Email
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(80); // Phone
@@ -104,26 +106,36 @@ public class CustomerView extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
         );
 
-        btnSearch.setText("Search");
+        btnSearch.setText("Tìm Kiếm");
 
-        btnSearch.addActionListener(new ActionListener() {
+        jSearchText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String nameCus = jSearchText.getText().trim().toString();
-                setTableData(customerController.searchCustomerByFullName(nameCus));
+            public void insertUpdate(DocumentEvent e) {
+                handleSearchCustomer();
             }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearchCustomer();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearchCustomer();
+            }
+
         });
 
-        jLabel2.setText("Search For");
+        jLabel2.setText("Nhập tên khách hàng");
 
-        btnAdd.setText("Add New");
+        btnAdd.setText("Thêm mới");
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CustomerAddNew customerAddNew = new CustomerAddNew();
+                CustomerAddNew customerAddNew = new CustomerAddNew(CustomerView.this);
                 customerAddNew.setVisible(true);
             }
         });
@@ -131,10 +143,6 @@ public class CustomerView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(107, 107, 107))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -148,6 +156,10 @@ public class CustomerView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSearch)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(169, 169, 169))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,11 +195,15 @@ public class CustomerView extends javax.swing.JFrame {
         }
     }
 
-    private void loadCustomerData() throws SQLException {
+    public void loadCustomerData() throws SQLException {
         List<CustomerModel> customers = customerController.getAllCustomers();
         setTableData(customers);
     }
 
+    private void handleSearchCustomer(){
+        String customerName = jSearchText.getText().trim();
+        setTableData(customerController.searchCustomerByFullName(customerName));
+    }
 
 
     /**
@@ -239,6 +255,6 @@ public class CustomerView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jSearchText;
     private javax.swing.JTable jTable1;
-    private DefaultTableModel tableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
     // End of variables declaration//GEN-END:variables
 }

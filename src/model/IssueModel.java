@@ -9,8 +9,19 @@ public class IssueModel {
     private Timestamp issueDate;
     private String issueStatus;
     private String issuePriority;
+    private String employeeName;
+    private String accountEmployee;
 
-    public IssueModel() {}
+    public IssueModel(int issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority, String employeeName, String accountEmployee) {
+        this.issueID = issueID;
+        this.issueTitle = issueTitle;
+        this.issueDescription = issueDescription;
+        this.issueDate = issueDate;
+        this.issueStatus = issueStatus;
+        this.issuePriority = issuePriority;
+        this.employeeName = employeeName;
+        this.accountEmployee = accountEmployee;
+    }
 
     public IssueModel(int issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority) {
         this.issueID = issueID;
@@ -21,13 +32,30 @@ public class IssueModel {
         this.issuePriority = issuePriority;
     }
 
-    public IssueModel(String title, String description, String status, String priority) {
+    public IssueModel(String title, String description, String status, String priority, String employeeName, String accountEmployee) {
         this.issueTitle = title;
         this.issueDescription = description;
         this.issueStatus = status;
         this.issuePriority = priority;
+        this.employeeName = employeeName;
+        this.accountEmployee = accountEmployee;
     }
 
+    public String getAccountEmployee() {
+        return accountEmployee;
+    }
+
+    public void setAccountEmployee(String accountEmployee) {
+        this.accountEmployee = accountEmployee;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
 
     public int getIssueID() {
         return issueID;

@@ -19,7 +19,6 @@ public class ServiceController {
         FROM services AS s
         LEFT JOIN suppliers AS sup ON s.supplier_id = sup.supplier_id
         LEFT JOIN packages AS p ON s.package_id = p.package_id 
-        ORDER BY s.service_id;
     """;
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query);
@@ -40,7 +39,6 @@ public class ServiceController {
 
         return serviceModels;
     }
-
 
     public List<ServiceModel> searchServicesByName(String serviceName) throws SQLException {
         List<ServiceModel> services = new ArrayList<>();
@@ -110,12 +108,23 @@ public class ServiceController {
 
     }
 
+    public int getPackageId(String packageName) throws SQLException {
+        int packageID = 0;
+        String query = "Select package_id from packages where package_name = ?";
+        try(Connection con = DatabaseConnection.getConnection();
+            PreparedStatement pstm = con.prepareStatement(query)){
+            pstm.setString(1, packageName);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()){
+                packageID = rs.getInt("package_id");
+            }
+        } return packageID;
+    }
 
     public boolean updateService(ServiceModel svModel) {
         String sql ="update services as s\n" +
                 "join packages as p on p.package_id = s.package_id\n" +
-                "join suppliers as sup on sup.supplier_id = s.supplier_id\n" +
-                "set s.service_name = ?, s.description =?, sup.supplier_name = ?, p.package_name = ?\n" +
+                "set s.service_name = ?, s.description =?, s.package_id = ?\n" +
                 "where s.service_id = ?;";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -124,9 +133,8 @@ public class ServiceController {
             // Thiết lập các tham số
             stmt.setString(1, svModel.getServiceName()); // Tham số 1: new_service_name
             stmt.setString(2, svModel.getServiceDescription()); // Tham số 2: new_service_description
-            stmt.setString(3, svModel.getServiceSupplier()); // Tham số 3: new_service_supplier
-            stmt.setString(4, svModel.getServicePackageName());// Tham số 4: new_package_name
-            stmt.setInt(5, svModel.getServiceId()); // Tham số 5: service_id
+            stmt.setInt(3, svModel.getPackageId());// Tham số 4: new_package_name
+            stmt.setInt(4, svModel.getServiceId()); // Tham số 5: service_id
 
             // Thực thi câu lệnh
             int rowsUpdated = stmt.executeUpdate();

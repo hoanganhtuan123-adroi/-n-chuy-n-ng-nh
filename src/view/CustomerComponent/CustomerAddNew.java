@@ -18,11 +18,12 @@ import java.sql.SQLException;
  * @author admin
  */
 public class CustomerAddNew extends javax.swing.JFrame {
-
+    private CustomerView customerView;
     /**
      * Creates new form CustomerAddNew
      */
-    public CustomerAddNew() {
+    public CustomerAddNew(CustomerView customerView) {
+        this.customerView = customerView;
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -54,9 +55,9 @@ public class CustomerAddNew extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Add New Customer");
+        jLabel1.setText("Thêm mới khách hàng");
 
-        jLabel4.setText("Customer Name");
+        jLabel4.setText("Họ và tên ");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -65,9 +66,9 @@ public class CustomerAddNew extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(jName, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -79,7 +80,7 @@ public class CustomerAddNew extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jLabel5.setText("Customer Email");
+        jLabel5.setText("Địa chỉ email");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -101,7 +102,7 @@ public class CustomerAddNew extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jLabel6.setText("Customer Phone");
+        jLabel6.setText("Số điện thoại");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -110,8 +111,8 @@ public class CustomerAddNew extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                .addComponent(jPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addComponent(jPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,7 +124,7 @@ public class CustomerAddNew extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jLabel7.setText("Customer Address");
+        jLabel7.setText("Địa chỉ");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -132,7 +133,7 @@ public class CustomerAddNew extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel7)
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -147,33 +148,15 @@ public class CustomerAddNew extends javax.swing.JFrame {
         );
 
         btnAddNew.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAddNew.setText("Add New");
+        btnAddNew.setText("Thêm mới");
         btnAddNew.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String name = jName.getText();
-                String email = jEmail.getText();
-                String phone = jPhone.getText();
-                String address = jAddress.getText();
-                if(name.isEmpty() || email.isEmpty() || phone.isEmpty() || address.isEmpty()){
-                    JOptionPane.showMessageDialog(null, "Please fill all fiels");
-                } else {
-                    CustomerModel customer = new CustomerModel(name, email, phone, address);
-                    CustomerController customerController = new CustomerController();
-                    try {
-                        if( customerController.addCustomer(customer)){
-                            JOptionPane.showMessageDialog(null, "Customer Added Successfully");
-                            dispose();
-                            CustomerView view = new CustomerView();
-                            view.setVisible(true);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Customer Not Added Successfully");
-                        }
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
+                try {
+                    handleAddNew();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
-
             }
         });
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -184,12 +167,12 @@ public class CustomerAddNew extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(41, Short.MAX_VALUE))
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(72, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel1)
@@ -218,6 +201,27 @@ public class CustomerAddNew extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public void handleAddNew() throws SQLException {
+        String cusName = jName.getText().trim();
+        String cusEmail = jEmail.getText().trim();
+        String cusPhone = jPhone.getText().trim();
+        String cusAdd = jAddress.getText().trim();
+        if(cusName.isEmpty() || cusEmail.isEmpty() || cusPhone.isEmpty() || cusAdd.isEmpty()){
+            JOptionPane.showMessageDialog(this,"Vui lòng điền đầy đủ thông tin!" );
+        } else {
+            CustomerModel customerModel = new CustomerModel(cusName, cusEmail, cusPhone, cusAdd);
+            CustomerController customerController = new CustomerController();
+            if (customerController.addCustomer(customerModel)) {
+                JOptionPane.showMessageDialog(this, "Thêm mới khách hàng thành công!");
+                customerView.loadCustomerData();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm khách hàng thất bại!");
+            }
+        }
+       
+    }
 
     /**
      * @param args the command line arguments
@@ -249,7 +253,7 @@ public class CustomerAddNew extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CustomerAddNew().setVisible(true);
+//                new CustomerAddNew().setVisible(true);
             }
         });
     }

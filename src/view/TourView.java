@@ -9,6 +9,10 @@ import custome.ButtonRenderedTour;
 import model.TourModel;
 import view.TourComponent.TourAddNew;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +36,7 @@ public class TourView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        loadCustomerData();
+        loadData();
     }
 
     /**
@@ -45,32 +49,39 @@ public class TourView extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         btnSearch = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         btnAddNew = new javax.swing.JButton();
+        jBoxSearch = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Tour Management");
-        jTableModel = new DefaultTableModel( new Object [][] {
+        jLabel1.setText("Quản lý tour");
+        jTableModel = new DefaultTableModel(new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null}
         },
                 new String [] {
-                        "Tour ID ", "Package ID", "Tour Name", "Destination ", "Start Date", "End Date", "Departure Location", "Price", "Package Name", "Action"
-                }){
-
-            boolean[] canEdit = new boolean [] {
-                    false, false, false, false, false, false, false, false, false, true
+                        "Tour ID ", "Package ID", "Tên Tour", "Điểm đến", "Ngày đi", "Ngày kết thúc", "Điểm xuất phát", "Giá", "Tên gói", "Action"
+                }) {
+            Class[] types = new Class [] {
+                    java.lang.Integer.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Object.class
             };
+            boolean[] canEdit = new boolean [] {
+                    false, true, false, false, false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -78,8 +89,8 @@ public class TourView extends javax.swing.JFrame {
         };
         jTable1.setModel(jTableModel);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedTour(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedTour(jTable1));
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedTour(jTable1, TourView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedTour(jTable1, TourView.this));
 
 
         jTable1.setRowHeight(40);
@@ -91,43 +102,74 @@ public class TourView extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(80); // Start
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(80); // End
         jTable1.getColumnModel().getColumn(6).setPreferredWidth(80); // Dep
-        jTable1.getColumnModel().getColumn(7).setPreferredWidth(80); // Price
+        jTable1.getColumnModel().getColumn(7).setPreferredWidth(65); // Price
         jTable1.getColumnModel().getColumn(8).setPreferredWidth(100); // PC_NAME
-        jTable1.getColumnModel().getColumn(9).setPreferredWidth(200); // Action
+        jTable1.getColumnModel().getColumn(9).setPreferredWidth(230); // Action
 
+        // Căn giữa cho tất cả các cột
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(7).setResizable(false);
+        // Áp dụng centerRenderer cho tất cả các cột
+        for (int i = 0; i < jTable1.getColumnCount() - 1; i++) {
+            jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        jLabel2.setText("Search for:");
+        jScrollPane1.setViewportView(jTable1);
 
         jTextField1.setToolTipText("");
+        jTextField1.getDocument().addDocumentListener(new DocumentListener() {
 
-        btnSearch.setText("Search");
-
-        btnAddNew.setText("ADD NEW");
-
-        btnAddNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TourAddNew tourAddNew = new TourAddNew();
-                tourAddNew.setVisible(true);
-            }
-        });
-
-        btnSearch.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                String searchText = jTextField1.getText().trim();
+            public void insertUpdate(DocumentEvent e) {
+                searchTours();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchTours();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchTours();
+            }
+
+            private void searchTours() {
+                // Gọi hàm tìm kiếm vào Model (Controller) với sự kiểm tra ngoại lệ
                 try {
-                    List<TourModel> filteredTours = tourController.searchToursByName(searchText);
-                    setTableData(filteredTours);
+                    handleSearchTour();
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+                    // Xử lý lỗi, có thể hiển thị thông báo hoặc làm gì đó
+                    JOptionPane.showMessageDialog(null, "Lỗi khi tìm kiếm: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+        btnSearch.setText("Tìm kiếm");
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    handleSearchTour();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        btnAddNew.setText("Thêm mới");
+        btnAddNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    TourAddNew tourAddNew = new TourAddNew(TourView.this);
+                    tourAddNew.setVisible(true);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            }
+        });
+        jBoxSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tên tour", "Điểm đến", "Tên gói" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,8 +181,8 @@ public class TourView extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAddNew)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnSearch)
@@ -157,11 +199,11 @@ public class TourView extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSearch)
                     .addComponent(jLabel3)
-                    .addComponent(btnAddNew))
+                    .addComponent(btnAddNew)
+                    .addComponent(jBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addContainerGap())
@@ -169,6 +211,16 @@ public class TourView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public void handleSearchTour() throws SQLException {
+        String searchName = jTextField1.getText().trim();
+        switch (jBoxSearch.getSelectedItem().toString().trim()) {
+            case "Tên tour" : setTableData(tourController.searchToursByName(searchName)); break;
+            case "Điểm đến" : setTableData(tourController.searchToursByDestination(searchName)); break;
+            case "Tên gói" : setTableData(tourController.searchToursByPackage(searchName)); break;
+            default: break;
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -220,27 +272,28 @@ public class TourView extends javax.swing.JFrame {
                     tour.getStart_date(),
                     tour.getEnd_date(),
                     tour.getDeparture_location(),
-                    tour.getPrices(),
+                    String.format("%,d", tour.getPrices()) + " VND",
                     tour.getPackageName(),
             };
             jTableModel.addRow(row);
         }
     }
 
-    private void loadCustomerData() throws SQLException {
+    public void loadData() throws SQLException {
         List<TourModel> tours = tourController.getAllTours();
         setTableData(tours);
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddNew;
     private javax.swing.JButton btnSearch;
+    private javax.swing.JComboBox<String> jBoxSearch;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
-    private DefaultTableModel jTableModel;
+    private javax.swing.table.DefaultTableModel jTableModel;
     // End of variables declaration//GEN-END:variables
 }

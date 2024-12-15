@@ -3,7 +3,7 @@ package model;
 import java.sql.Date;
 
 public class PaymentModel {
-    private int paymentID;
+    private String paymentID;
     private int customerID;
     private int bookingID;
     private Date paymentDate;
@@ -16,6 +16,7 @@ public class PaymentModel {
     private String customerPhone;
     private String customerEmail;
     private String tourName;
+    private int tourId;
 
     public PaymentModel( String tourName,String customerEmail, String customerPhone, String customerAddress, String customerName, String paymentStatus, String paymentMethod, String amount, Date paymentDate) {
         this.tourName = tourName;
@@ -29,7 +30,7 @@ public class PaymentModel {
         this.paymentDate = paymentDate;
     }
 
-    public PaymentModel(int paymentID, int customerID, int bookingID, Date paymentDate, String amount, String paymentMethod, String transactionID, String paymentStatus) {
+    public PaymentModel(String paymentID, int customerID, int bookingID, Date paymentDate, String amount, String paymentMethod, String transactionID, String paymentStatus) {
         this.paymentID = paymentID;
         this.customerID = customerID;
         this.bookingID = bookingID;
@@ -40,7 +41,7 @@ public class PaymentModel {
         this.paymentStatus = paymentStatus;
     }
 
-    public PaymentModel(int paymentID, Date paymentDate, String tourName, String customerName, String paymentStatus) {
+    public PaymentModel(String paymentID, Date paymentDate, String tourName, String customerName, String paymentStatus) {
         this.paymentID = paymentID;
         this.paymentDate = paymentDate;
         this.tourName = tourName;
@@ -48,15 +49,15 @@ public class PaymentModel {
         this.paymentStatus = paymentStatus;
     }
 
-    public PaymentModel(int paymentId, String customerName, String tourName, Date paymentDate, String status) {
+    public PaymentModel(String paymentId, String customerName, String tourName, Date paymentDate, String status) {
         this.paymentID = paymentId;
         this.customerName = customerName;
         this.tourName = tourName;
         this.paymentDate = paymentDate;
         this.paymentStatus = status;
     }
-
-    public PaymentModel(int paymentID, String customerName, String tourName, Date paymentDate, String amount, String status, String paymentMethod, String transactionId) {
+    
+     public PaymentModel(String paymentID, String customerName, String tourName, Date paymentDate, String amount, String status, String paymentMethod, String transactionId) {
         this.paymentID = paymentID;
         this.customerName = customerName;
         this.tourName = tourName;
@@ -66,6 +67,27 @@ public class PaymentModel {
         this.paymentStatus = status;
         this.paymentDate = paymentDate;
     }
+
+    public PaymentModel(String paymentID, String customerName, int tourId, Date paymentDate, String amount, String status, String paymentMethod, String transactionId) {
+        this.paymentID = paymentID;
+        this.customerName = customerName;
+        this.tourId = tourId;
+        this.amount = amount;
+        this.paymentMethod = paymentMethod;
+        this.transactionID = transactionId;
+        this.paymentStatus = status;
+        this.paymentDate = paymentDate;
+    }
+
+    public int getTourId() {
+        return tourId;
+    }
+
+    public void setTourId(int tourId) {
+        this.tourId = tourId;
+    }
+    
+    
 
     public String getCustomerEmail() {
         return customerEmail;
@@ -107,11 +129,11 @@ public class PaymentModel {
         this.tourName = tourName;
     }
 
-    public int getPaymentID() {
+    public String getPaymentID() {
         return paymentID;
     }
 
-    public void setPaymentID(int paymentID) {
+    public void setPaymentID(String paymentID) {
         this.paymentID = paymentID;
     }
 

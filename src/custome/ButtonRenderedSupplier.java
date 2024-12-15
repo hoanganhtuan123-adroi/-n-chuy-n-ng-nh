@@ -30,15 +30,16 @@ public class ButtonRenderedSupplier extends AbstractCellEditor implements TableC
     private JButton detailButton, updateButton;
     private JTable table;
     private ServiceController serviceController;
-
-    public ButtonRenderedSupplier(JTable table){
+    private SupplierView supplierView;
+    public ButtonRenderedSupplier(JTable table, SupplierView supplierView) throws SQLException {
         this.table = table;
         this.serviceController = new ServiceController();
+        this.supplierView = supplierView;
         panel = new JPanel(new FlowLayout());
 
         // Create buttons
-        detailButton = new JButton("Detail");
-        updateButton = new JButton("Update");
+        detailButton = new JButton("Chi tiết");
+        updateButton = new JButton("Cập nhập");
         // Add buttons to panel
         panel.add(detailButton);
         panel.add(updateButton);
@@ -68,7 +69,7 @@ public class ButtonRenderedSupplier extends AbstractCellEditor implements TableC
                     int supplierID = (supplierIdObj instanceof Integer) ? (Integer) supplierIdObj : Integer.parseInt(supplierIdObj.toString());
                     supplierController = new SupplierController();
                     supplierModel = supplierController.getSupplier(supplierID);
-                    supplierUpdate = new SupplierUpdate(supplierModel);
+                    supplierUpdate = new SupplierUpdate(supplierModel, supplierView);
                     supplierUpdate.setVisible(true);
                 }
             }

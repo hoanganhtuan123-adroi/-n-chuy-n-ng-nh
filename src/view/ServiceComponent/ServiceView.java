@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,16 +25,44 @@ public class ServiceView extends javax.swing.JFrame {
     /**
      * Creates new form ServiceView
      */
-    public ServiceView() {
+    public ServiceView() throws SQLException {
         serviceController = new ServiceController();
-        listServices = serviceController.getAllService();
         initComponents();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        setServiceTableData(listServices);
+        loadServiceData();
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchKey = jTextField1.getText().trim();
+                if(searchKey.isBlank() || searchKey.isEmpty()){
+                    JOptionPane.showMessageDialog(ServiceView.this, "Please enter the name's service.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        listServices = serviceController.searchServicesByName(searchKey);
+                        setServiceTableData(listServices);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(ServiceView.this, "Error searching services.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+            }
+        });
+
+        btnAddNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ServiceAddNew serviceAddNew = new ServiceAddNew();
+                serviceAddNew.setVisible(true);
+            }
+        });
+
+
     }
 
     /**
@@ -57,51 +84,49 @@ public class ServiceView extends javax.swing.JFrame {
         btnSearch = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        jTableModel = new DefaultTableModel(new Object[][]{
+
+        tableModel = new DefaultTableModel(new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
         },
-                new String[]{
-                        "Service ID", "Service Name", "Description", "Supplier", "Package Name", "Action"
+                new String [] {
+                        "Mã Dịch Vụ", "Tên Dịch Vụ", "Mô Tả", "Nhà Cung Cấp", "Tên Gói", "Action"
                 }) {
-            boolean[] canEdit = new boolean[]{
+            boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
+                return canEdit [columnIndex];
             }
         };
-        jTable1.setModel(jTableModel);
+
+        jTable1.setModel(tableModel);
+        jScrollPane1.setViewportView(jTable1);
+
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedService(jTable1, ServiceView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedService(jTable1, ServiceView.this));
 
         jTable1.setRowHeight(40);
 
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(20); // Service ID
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(80); // Service Name
-        jTable1.getColumnModel().getColumn(2).setPreferredWidth(200); // Description
-        jTable1.getColumnModel().getColumn(3).setPreferredWidth(80); // Supplier
-        jTable1.getColumnModel().getColumn(4).setPreferredWidth(100); // Package Name
-        jTable1.getColumnModel().getColumn(5).setPreferredWidth(150); // Action
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(20);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(40);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(180);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(80);
+        jTable1.getColumnModel().getColumn(4).setPreferredWidth(80);
+        jTable1.getColumnModel().getColumn(5).setPreferredWidth(100);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedService(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedService(jTable1));
-
-        jScrollPane1.setViewportView(jTable1);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Service Information");
+        jLabel1.setText("Quản lý dịch vụ");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(163, 163, 163))
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -111,40 +136,15 @@ public class ServiceView extends javax.swing.JFrame {
         );
 
         btnAddNew.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnAddNew.setText("Add New");
-        btnAddNew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ServiceAddNew serviceAddNew = new ServiceAddNew();
-                serviceAddNew.setVisible(true);
-            }
-        });
+        btnAddNew.setText("Thêm mới");
+
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setText("Search For:");
+        jLabel2.setText("Nhập tên dịch vụ");
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
         btnSearch.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnSearch.setText("Search");
-
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String searchKey = jTextField1.getText().trim();
-                if(searchKey.isBlank() || searchKey.isEmpty()){
-                    JOptionPane.showMessageDialog(ServiceView.this, "Please enter the name's service.", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    try {
-                        listServices = serviceController.searchServicesByName(searchKey);
-                        setServiceTableData(listServices);
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(ServiceView.this, "Error searching services.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-
-            }
-        });
+        btnSearch.setText("Tìm Kiếm");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -152,19 +152,17 @@ public class ServiceView extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
                         .addComponent(btnAddNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -172,23 +170,22 @@ public class ServiceView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddNew)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSearch))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAddNew)
+                        .addComponent(jLabel2)
+                        .addComponent(btnSearch)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 
-    public void setServiceTableData(List<ServiceModel> services) {
-        DefaultTableModel serviceTableModel = (DefaultTableModel) jTable1.getModel();
-        serviceTableModel.setRowCount(0); // Xóa dữ liệu cũ
-
+    private void setServiceTableData(List<ServiceModel> services) {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
         for (ServiceModel service : services) {
             Object[] row = {
                     service.getServiceId(),
@@ -196,12 +193,16 @@ public class ServiceView extends javax.swing.JFrame {
                     service.getServiceDescription(),
                     service.getServiceSupplier(),
                     service.getServicePackageName(),
-//                    service.isIncluded() ? "Yes" : "No"
             };
-            serviceTableModel.addRow(row);
+            tableModel.addRow(row);
         }
     }
 
+    
+    public void loadServiceData() throws SQLException {
+        List<ServiceModel> services = serviceController.getAllService();
+        setServiceTableData(services);
+    }
 
 
 
@@ -231,22 +232,22 @@ public class ServiceView extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ServiceView().setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new ServiceView().setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnAddNew;
+    private javax.swing.JButton btnSearch;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
-    private DefaultTableModel jTableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
     // End of variables declaration//GEN-END:variables
 }

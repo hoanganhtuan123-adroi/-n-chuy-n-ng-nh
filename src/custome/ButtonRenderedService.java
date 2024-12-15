@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import view.ServiceComponent.ServiceView;
 
 public class ButtonRenderedService extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
 
@@ -26,15 +27,17 @@ public class ButtonRenderedService extends AbstractCellEditor implements TableCe
     private JButton deleteButton;
     private JTable table;
     private ServiceController serviceController;
+    private ServiceView serviceView;
 
-    public ButtonRenderedService(JTable table){
+    public ButtonRenderedService(JTable table, ServiceView serviceView){
        this.table = table;
         this.serviceController = new ServiceController();
+        this.serviceView = serviceView;
        panel = new JPanel(new FlowLayout());
 
        // Create buttons
-       updateButton = new JButton("Update");
-       deleteButton = new JButton("Delete");
+       updateButton = new JButton("Chi Tiết");
+       deleteButton = new JButton("Xóa");
 
        // Add buttons to panel
        panel.add(updateButton);
@@ -52,7 +55,7 @@ public class ButtonRenderedService extends AbstractCellEditor implements TableCe
                     int serviceID = (serviceIdObj instanceof Integer) ? (Integer) serviceIdObj : Integer.parseInt(serviceIdObj.toString());
                     services = serviceController.getItemService(serviceID);
 
-                    ServiceUpdate serviceUpdate = new ServiceUpdate(services);
+                    ServiceUpdate serviceUpdate = new ServiceUpdate(services, serviceView);
                     serviceUpdate.setVisible(true);
                 }
             }

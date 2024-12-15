@@ -8,6 +8,8 @@ import controller.CustomerController;
 import model.CustomerModel;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 /**
@@ -21,11 +23,13 @@ public class CustomerUpdate extends javax.swing.JFrame {
     private String address;
     private int customerID;
     private CustomerModel csModel;
+    private CustomerView customerView;
     private CustomerController csController;
     /**
      * Creates new form CustomerUpdate
      */
-    public CustomerUpdate(String customerName, String email, String phone, String address, int customerID) {
+    public CustomerUpdate(CustomerView customerView,String customerName, String email, String phone, String address, int customerID) {
+        this.customerView = customerView;
         this.customerName = customerName;
         this.email = email;
         this.phone = phone;
@@ -67,22 +71,12 @@ public class CustomerUpdate extends javax.swing.JFrame {
         jTextFieldAddress.setText(address);
         btnSave = new javax.swing.JButton();
 
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    hanldeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Customer Update");
+        jLabel1.setText("Cập nhập khách hàng");
 
-        jLabel2.setText("Customer Name:");
+        jLabel2.setText("Họ và tên");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -91,9 +85,9 @@ public class CustomerUpdate extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
                 .addComponent(jTextFieldName, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53))
+                .addGap(32, 32, 32))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,7 +99,7 @@ public class CustomerUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel3.setText("Customer Email:");
+        jLabel3.setText("Địa chỉ email");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -128,7 +122,7 @@ public class CustomerUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel4.setText("Customer Phone:");
+        jLabel4.setText("Số điện thoại");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -151,7 +145,7 @@ public class CustomerUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel5.setText("Customer Address:");
+        jLabel5.setText("Địa chỉ");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -160,9 +154,9 @@ public class CustomerUpdate extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
                 .addComponent(jTextFieldAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65))
+                .addGap(17, 17, 17))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,7 +170,16 @@ public class CustomerUpdate extends javax.swing.JFrame {
 
         btnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnSave.setText("Save");
-
+        btnSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    hanldeUpdate();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -266,10 +269,8 @@ public class CustomerUpdate extends javax.swing.JFrame {
         csModel.setPhone(jTextFieldPhone.getText().toString());
 
         if(csController.updateCustomer(csModel, customerID)){
-
             JOptionPane.showMessageDialog(CustomerUpdate.this, "Cập nhật thành công!");
-            customerView = new CustomerView();
-            customerView.setVisible(true);
+            customerView.loadCustomerData();
             dispose();
         } else {
             JOptionPane.showMessageDialog(CustomerUpdate.this, "Cập nhật thất bại!");
@@ -291,6 +292,5 @@ public class CustomerUpdate extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldEmail;
     private javax.swing.JTextField jTextFieldName;
     private javax.swing.JTextField jTextFieldPhone;
-    private CustomerView customerView;
     // End of variables declaration//GEN-END:variables
 }

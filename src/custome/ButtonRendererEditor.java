@@ -13,6 +13,7 @@ import controller.EmployeeController;
 import model.CustomerModel;
 import view.CustomerComponent.CustomerDetail;
 import view.CustomerComponent.CustomerUpdate;
+import view.CustomerComponent.CustomerView;
 
 public class ButtonRendererEditor extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
     private List<CustomerModel> customersList;
@@ -21,16 +22,17 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
     private JButton updateButton;
     private JButton deleteButton;
     private JTable table;
+    private CustomerView customerView;
 
-    public ButtonRendererEditor(JTable table) {
+    public ButtonRendererEditor(JTable table, CustomerView customerView) throws SQLException {
         this.table = table;
-
+        this.customerView = customerView;
         panel = new JPanel(new FlowLayout());
 
         // Create buttons
-        detailButton = new JButton("Detail");
-        updateButton = new JButton("Update");
-        deleteButton = new JButton("Delete");
+        detailButton = new JButton("Chi tiết");
+        updateButton = new JButton("Câp nhập");
+        deleteButton = new JButton("Xóa");
 
         // Add buttons to panel
         panel.add(detailButton);
@@ -73,7 +75,7 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
                     String address = (String) table.getValueAt(row, 4);
 
                     // Hiển thị JFrame mới với thông tin chi tiết
-                    CustomerUpdate updateFrame = new CustomerUpdate(customerName, email, phone, address, Integer.valueOf(customerId));
+                    CustomerUpdate updateFrame = new CustomerUpdate(customerView, customerName, email, phone, address, Integer.valueOf(customerId));
                     updateFrame.setVisible(true);
                 }
             }

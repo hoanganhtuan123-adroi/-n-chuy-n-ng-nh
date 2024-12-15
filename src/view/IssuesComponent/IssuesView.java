@@ -12,7 +12,9 @@ import model.EmployeeModel;
 import model.IssueModel;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -62,7 +64,12 @@ public class IssuesView extends javax.swing.JFrame {
         btnAddNew.setText("Add New");
         btnAddNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IssueAddNew issueAddNew = new IssueAddNew();
+                IssueAddNew issueAddNew = null;
+                try {
+                    issueAddNew = new IssueAddNew();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 issueAddNew.setVisible(true);
             }
         });
@@ -99,9 +106,6 @@ public class IssuesView extends javax.swing.JFrame {
         jTable1.setModel(tableModel);
         jTable1.setRowHeight(40);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedIssues(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedIssues(jTable1));
-
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(30);
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
         jTable1.getColumnModel().getColumn(2).setPreferredWidth(160);
@@ -109,6 +113,8 @@ public class IssuesView extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(80);
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(150);
 
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedIssues(jTable1));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedIssues(jTable1));
 
         jScrollPane1.setViewportView(jTable1);
 

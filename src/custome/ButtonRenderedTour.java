@@ -4,6 +4,7 @@ import controller.TourController;
 import model.TourModel;
 import view.TourComponent.TourDetail;
 import view.TourComponent.TourUpdate;
+import view.TourView;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -13,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ButtonRenderedTour extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
 
@@ -23,16 +26,17 @@ public class ButtonRenderedTour extends AbstractCellEditor implements TableCellR
     private JButton deleteButton;
     private JTable table;
     private TourController tourController;
-
-    public ButtonRenderedTour(JTable table){
+    private TourView tourView;
+    public ButtonRenderedTour(JTable table, TourView tourView){
        this.table = table;
+       this.tourView = tourView;
         this.tourController = new TourController();
        panel = new JPanel(new FlowLayout());
 
        // Create buttons
-       detailButton = new JButton("Detail");
-       updateButton = new JButton("Update");
-       deleteButton = new JButton("Delete");
+       detailButton = new JButton("Chi tiết");
+       updateButton = new JButton("Cập nhập");
+       deleteButton = new JButton("Xóa");
 
        // Add buttons to panel
        panel.add(detailButton);
@@ -68,8 +72,14 @@ public class ButtonRenderedTour extends AbstractCellEditor implements TableCellR
                     int tourID = (tourIdObj instanceof Integer) ? (Integer) tourIdObj : Integer.parseInt(tourIdObj.toString());
                     tours  = tourController.showTourDetails(tourID);
 
-                    TourUpdate tourUpdate = new TourUpdate(tours);
-                    tourUpdate.setVisible(true);
+                    TourUpdate tourUpdate;
+                    try {
+                        tourUpdate = new TourUpdate(tours, tourView);
+                        tourUpdate.setVisible(true);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ButtonRenderedTour.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                   
                 }
             }
         });
@@ -92,9 +102,9 @@ public class ButtonRenderedTour extends AbstractCellEditor implements TableCellR
                        try {
                            boolean isDeleted = tourController.deleteTour(tourID);
                            if(isDeleted){
-                               JOptionPane.showMessageDialog(panel, "Tour deleted successfully");
+                               JOptionPane.showMessageDialog(panel, "Xóa tour thành công!");
                            } else {
-                               JOptionPane.showMessageDialog(panel, "Unable to delete tour");
+                               JOptionPane.showMessageDialog(panel, "Không thể xóa tour này!");
                            }
                        } catch (SQLException ex) {
                            throw new RuntimeException(ex);

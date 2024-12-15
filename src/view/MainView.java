@@ -4,6 +4,7 @@
  */
 package view;
 
+import view.BookingComponent.BookingView;
 import view.CustomerComponent.CustomerView;
 import view.IssuesComponent.IssuesView;
 import view.PaymentComponent.PaymentView;
@@ -26,6 +27,20 @@ public class MainView extends javax.swing.JFrame {
     public MainView() {
         initComponents();
         setLocationRelativeTo(null);
+
+        btnBookingPK.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BookingView bookingView = null;
+                try {
+                    bookingView = new BookingView();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                bookingView.setVisible(true);
+            }
+        });
 
         btnCusMN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -56,8 +71,13 @@ public class MainView extends javax.swing.JFrame {
 
         btnService.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-              ServiceView serviceView = new ServiceView();
-              serviceView.setVisible(true);
+                ServiceView serviceView = null;
+                try {
+                    serviceView = new ServiceView();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                serviceView.setVisible(true);
             }
         });
 

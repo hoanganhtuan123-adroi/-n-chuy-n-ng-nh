@@ -7,10 +7,10 @@ package view.SupplierComponent;
 import controller.SupplierController;
 import custome.ButtonRenderedSupplier;
 import model.SupplierModel;
-import model.TourModel;
 
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -30,6 +30,29 @@ public class SupplierView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
         loadCustomerData();
+        jSearchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleSearch();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearch();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearch();
+            }
+        });
+        jButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SupplierAdd supplierAdd = new SupplierAdd(SupplierView.this);
+                supplierAdd.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -39,48 +62,33 @@ public class SupplierView extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() throws SQLException {
 
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jSearchField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jBoxSearch = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 600));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel1.setText("Supplier Management");
-        jLabel2.setText("Search For");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("QUẢN LÝ NHÀ CUNG CẤP");
 
-        jButton1.setText("Search");
-        jButton1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String searchText = jTextField1.getText().toString().trim();
-                List<SupplierModel> lists = supplierController.searchSupplier(searchText);
-                setTableData(lists);
-            }
-        });
-        jButton2.setText("Add New");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SupplierAdd supplierAdd = new SupplierAdd();
-                supplierAdd.setVisible(true);
-            }
-        });
+        jButton1.setText("Tìm kiếm");
 
-        tableModel = new DefaultTableModel( new Object [][] {
+        jButton2.setText("Thêm mới");
+        tableModel = new DefaultTableModel(  new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
         },
                 new String [] {
-                        "Supplier ID", "Supplier Name", "Contact Name", "Contact Email", "Service Type", "Action"
+                        "Mã nhà cung cấp", "Nhà cung cấp", "Người đại diện", "Email liên lạc", "Loại dịch vụ", "Action"
                 }) {
             boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, true
@@ -91,10 +99,11 @@ public class SupplierView extends javax.swing.JFrame {
             }
         };
         jTable1.setModel(tableModel);
+
         jTable1.setRowHeight(50);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedSupplier(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedSupplier(jTable1));
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedSupplier(jTable1, SupplierView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedSupplier(jTable1, SupplierView.this));
 
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(30); // Supplier ID
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(40); // Supplier Name
@@ -104,6 +113,8 @@ public class SupplierView extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(150); // Action
 
         jScrollPane1.setViewportView(jTable1);
+
+        jBoxSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tên nhà cung cấp", "Địa chỉ email", "Loại dịch vụ" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,16 +129,13 @@ public class SupplierView extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
                         .addGap(14, 14, 14))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(221, 221, 221))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,10 +143,10 @@ public class SupplierView extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jBoxSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
                 .addContainerGap())
@@ -166,6 +174,16 @@ public class SupplierView extends javax.swing.JFrame {
         setTableData(suppliers);
     }
 
+    private void handleSearch(){
+        String searchText = jSearchField.getText().toString().trim();
+        switch (jBoxSearch.getSelectedItem().toString().trim()){
+            case "Tên nhà cung cấp": setTableData(supplierController.searchSupplierByName(searchText)); break;
+            case "Địa chỉ email": setTableData(supplierController.searchSupplierByEmail(searchText)); break;
+            case "Loại dịch vụ": setTableData(supplierController.searchSupplierByService(searchText)); break;
+            default: break;
+        }
+
+    }
 
 
     /**
@@ -207,13 +225,13 @@ public class SupplierView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> jBoxSearch;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jSearchField;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private DefaultTableModel tableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
     // End of variables declaration//GEN-END:variables
 }

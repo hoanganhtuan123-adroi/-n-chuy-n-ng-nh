@@ -2,7 +2,6 @@ package controller;
 
 import database.DatabaseConnection;
 import model.CustomerModel;
-import model.EmployeeModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -127,6 +126,24 @@ public class CustomerController {
             throw new RuntimeException(e);
         }
         return listCustomer;
+    }
+
+    public CustomerModel getInformationCustomer(int customerID) throws SQLException {
+        CustomerModel customer = null;
+        String query = "SELECT name, email, phone, address FROM customers WHERE customer_id = ?;";
+        try(Connection con = DatabaseConnection.getConnection();
+            PreparedStatement pstm = con.prepareStatement(query)){
+            pstm.setInt(1, customerID);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()){
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                String phone = rs.getString("phone");
+                String address = rs.getString("address");
+                customer = new CustomerModel(customerID, name, email, phone, address);
+            }
+        }
+        return customer;
     }
 
 }
