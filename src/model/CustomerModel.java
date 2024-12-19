@@ -15,8 +15,8 @@ import java.util.List;
  * @author admin
  */
 public class CustomerModel {
-    private int customer_id;
-    private int account_id;
+    private String customer_id;
+    private String account_id;
     private String name;
     private String email;
     private String phone;
@@ -25,7 +25,7 @@ public class CustomerModel {
 
     public CustomerModel() {super();};
 
-    public CustomerModel(int customer_id, int account_id , String customer_name, String email, String phone, String address, Timestamp created_at, Timestamp updated_at ) {
+    public CustomerModel(String customer_id, String account_id , String customer_name, String email, String phone, String address, Timestamp created_at, Timestamp updated_at ) {
         this.customer_id = customer_id;
         this.name = customer_name;
         this.email = email;
@@ -36,8 +36,8 @@ public class CustomerModel {
         this.account_id = account_id;
     }
 
-    public CustomerModel(int accountID, String name, String email, String phone, String address) {
-        this.account_id = accountID;
+    public CustomerModel(String customer_id, String name, String email, String phone, String address) {
+        this.customer_id = customer_id;
         this.name = name;
         this.email = email;
         this.phone = phone;
@@ -51,7 +51,7 @@ public class CustomerModel {
         this.address = address;
     }
 
-    public CustomerModel(int id, int acId, String name, String email, String phone, String address) {
+    public CustomerModel(String id, String acId, String name, String email, String phone, String address) {
         this.customer_id = id;
         this.account_id = acId;
         this.name = name;
@@ -60,11 +60,11 @@ public class CustomerModel {
         this.address = address;
     }
 
-    public int getAccount_id(){return account_id;};
+    public String getAccount_id(){return account_id;};
 
-    public void setAccount_id(int account_id){this.account_id = account_id;}
+    public void setAccount_id(String account_id){this.account_id = account_id;}
 
-    public int getCustomer_id() {
+    public String getCustomer_id() {
         return customer_id;
     }
 
@@ -92,7 +92,7 @@ public class CustomerModel {
         return updated_at;
     }
 
-    public void setCustomer_id(int customer_id) {
+    public void setCustomer_id(String customer_id) {
         this.customer_id = customer_id;
     }
 

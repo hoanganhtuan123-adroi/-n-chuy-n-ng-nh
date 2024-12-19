@@ -434,11 +434,11 @@ public class PaymentAddNew extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin", "Warning", JOptionPane.WARNING_MESSAGE);
         } else {
             PaymentModel paymentModel = new PaymentModel(tourName, cusEmail, cusPhone, cusAdrress, cusName, status, method,amount, payDate);
-            int customerID = paymentController.checkOrAddCustomer(con,paymentModel.getCustomerName(), paymentModel.getCustomerEmail(), paymentModel.getCustomerPhone(), paymentModel.getCustomerAddress());
+            String customerID = paymentController.checkOrAddCustomer(con,paymentModel.getCustomerName(), paymentModel.getCustomerEmail(), paymentModel.getCustomerPhone(), paymentModel.getCustomerAddress());
             int tourID = paymentController.getTourIdByName(con, paymentModel.getTourName());
             int packageID = paymentController.getPackageIdByTourID(con,tourID);
-            int bookingID = paymentController.addBooking(con,customerID,tourID, packageID, 2 ,Double.valueOf(paymentModel.getAmount()), status);
-            String transaction = paymentController.generateTransactionId(con);
+            String bookingID = paymentController.addBooking(con,customerID,tourID, packageID, 2 ,Double.valueOf(paymentModel.getAmount()), status);
+            String transaction = paymentController.generateTransactionId();
 
             boolean isAdded = paymentController.addPayment(con,bookingID,customerID,transaction,String.valueOf(paymentModel.getPaymentDate()), paymentModel.getPaymentMethod(), paymentModel.getPaymentStatus(),Double.parseDouble(paymentModel.getAmount()));
             if(isAdded){

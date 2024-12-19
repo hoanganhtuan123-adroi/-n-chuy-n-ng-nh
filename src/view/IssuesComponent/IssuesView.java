@@ -4,17 +4,15 @@
  */
 package view.IssuesComponent;
 
-import controller.EmployeeController;
 import controller.IssueController;
 import custome.ButtonRenderedIssues;
-import custome.ButtonRendererEmployee;
-import model.EmployeeModel;
+import custome.IssueTableRenderer;
+import custome.MultiLineTableCell;
 import model.IssueModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -34,9 +32,60 @@ public class IssuesView extends javax.swing.JFrame {
         initComponents();
         issueController = new IssueController();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(800,600);
+        setExtendedState(MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
-        loadCustomerData();
+        loadIssueData();
+        // Them moi van de
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IssueAddNew issueAddNew = null;
+                try {
+                    issueAddNew = new IssueAddNew(IssuesView.this);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                issueAddNew.setVisible(true);
+            }
+        });
+        // Tim kiem van de
+
+        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                search();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                search();
+            }
+
+            private void search()  {
+                try {
+                    searchByTitle();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        jButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    searchByTitle();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
     }
 
     /**
@@ -49,62 +98,39 @@ public class IssuesView extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        btnAddNew = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel2.setText("Search for");
+        jLabel2.setText("Tìm Kiếm Vấn Đề");
 
-        btnAddNew.setText("Add New");
-        btnAddNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IssueAddNew issueAddNew = null;
-                try {
-                    issueAddNew = new IssueAddNew();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                issueAddNew.setVisible(true);
-            }
-        });
-        jButton2.setText("Search");
-        jButton2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    searchByTitle();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-        tableModel = new DefaultTableModel(new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+        jButton1.setText("Thêm Mới");
+
+        jButton2.setText("Tìm Kiếm");
+        tableModel = new DefaultTableModel(   new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
         },
                 new String [] {
-                        "Issue ID", "Issue Title", "Description", "Issue Date", "Status", "Action"
-                }) {
+                        "Mã Vấn Đề", "Tên Vấn Đề", "Mô Tả Vấn Đề", "Ngày Tạo Vấn Đề", "Tình Trạng", "Nhân Viên Đảm Nhiệm", "Action"
+                }){
             boolean[] canEdit = new boolean [] {
-                    false, false, false, false, false, true
+                    false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         };
-
         jTable1.setModel(tableModel);
-        jTable1.setRowHeight(40);
+        jScrollPane1.setViewportView(jTable1);
 
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(30);
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
@@ -112,33 +138,24 @@ public class IssuesView extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(80);
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(150);
+        jTable1.getColumnModel().getColumn(6).setPreferredWidth(150);
 
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedIssues(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedIssues(jTable1));
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedIssues(jTable1, IssuesView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedIssues(jTable1, IssuesView.this));
 
-        jScrollPane1.setViewportView(jTable1);
+        for (int i = 0; i < jTable1.getColumnCount() - 1; i++) {
+            jTable1.getColumnModel().getColumn(i).setCellRenderer(new MultiLineTableCell());
+        }
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel3.setHorizontalAlignment(SwingConstants.CENTER);
-        jLabel3.setHorizontalTextPosition(SwingConstants.CENTER);
-        jLabel3.setText("Issues Management");
+        jTable1.getColumnModel().getColumn(5).setCellRenderer(new IssueTableRenderer());
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(149, 149, 149)
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jTable1.setRowHeight(60);
+
+
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Quản Lý Vấn Đề");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -147,10 +164,9 @@ public class IssuesView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAddNew)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -158,15 +174,16 @@ public class IssuesView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)))
                 .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(btnAddNew)
+                    .addComponent(jButton1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -176,21 +193,31 @@ public class IssuesView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     public void setTableData(List<IssueModel> issues) {
-        tableModel.setRowCount(0); // Xóa dữ liệu cũ
-        for (IssueModel issue : issues) {
-            Object[] row = {
-                    issue.getIssueID(),
-                    issue.getIssueTitle(),
-                    issue.getIssueDescription(),
-                    issue.getIssueDate(),
-                    issue.getIssueStatus()
-            };
-            tableModel.addRow(row);
+        if (issues == null || issues.isEmpty()) {
+            System.out.println("No issues available to display.");
+            tableModel.setRowCount(0); // Clear table when no data.
+            return;
         }
+
+        SwingUtilities.invokeLater(() -> {
+            tableModel.setRowCount(0); // Clear old data.
+            for (IssueModel issue : issues) {
+                Object[] row = {
+                        issue.getIssueID(),
+                        issue.getIssueTitle(),
+                        issue.getIssueDescription(),
+                        issue.getIssueDate(),
+                        issue.getIssueStatus(),
+                        issue.getEmployeeName()
+                };
+                tableModel.addRow(row);
+            }
+        });
     }
 
-    public void loadCustomerData() throws SQLException {
+    public void loadIssueData() throws SQLException {
         List<IssueModel> issues = IssueController.getAllIssues();
         setTableData(issues);
     }
@@ -237,14 +264,13 @@ public class IssuesView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAddNew;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
-    private DefaultTableModel tableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
     // End of variables declaration//GEN-END:variables
 }

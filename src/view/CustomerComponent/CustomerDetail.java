@@ -17,25 +17,18 @@ public class CustomerDetail  extends javax.swing.JDialog  {
      */
     public CustomerDetail(JFrame parent, String name, String email, String phone, String address) {
         super(parent, "Customer Information", true);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         initComponents();
         setSize(400, 400);
         setLocationRelativeTo(null);
-        setCusName(name);
-        setCusEmail(email);
-        setCusPhone(phone);
-        setCusAddress(address);
+        renderData(name, email, phone, address);
     }
 
-    public void setCusName(String name){
+
+    private void renderData(String name, String email, String phone, String address){
         jTextFieldName.setText(name);
-    }
-    public void setCusAddress(String address){
         jTextFieldAddress.setText(address);
-    }
-    public void setCusPhone(String phone){
         jTextFieldPhone.setText(phone);
-    }
-    public void setCusEmail(String email){
         jTextFieldEmail.setText(email);
     }
     /**
@@ -66,7 +59,7 @@ public class CustomerDetail  extends javax.swing.JDialog  {
         jTextFieldAddress = new javax.swing.JTextField();
         jTextFieldAddress.setEditable(false);
 
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+//        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Customer Information");

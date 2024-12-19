@@ -8,6 +8,7 @@ import model.BookingModel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 /**
  *
@@ -22,6 +23,8 @@ public class BookingDetail extends javax.swing.JFrame {
         this.bookings = bookings;
         initComponents();
         setLocationRelativeTo(null);
+        renderData();
+
     }
 
     /**
@@ -37,72 +40,47 @@ public class BookingDetail extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jBookID = new javax.swing.JTextField();
-        jBookID.setEditable(false);
-        jBookID.setText(String.valueOf(bookings.getBookingID()));
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jCusName = new javax.swing.JTextField();
-        jCusName.setEditable(false);
-        jCusName.setText(bookings.getCustomerName());
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTourName = new javax.swing.JTextArea();
-        jTourName.setEditable(false);
-        jTourName.setText(bookings.getTourName());
-        jTourName.setLineWrap(true);
-        jTourName.setWrapStyleWord(true);
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jPackName = new javax.swing.JTextField();
-        jPackName.setEditable(false);
-        jPackName.setText(bookings.getPackageName());
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jBookDate = new javax.swing.JTextField();
-        jBookDate.setEditable(false);
-        jBookDate.setText(String.valueOf(bookings.getBookingDate()));
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jMember = new javax.swing.JTextField();
-        jMember.setEditable(false);
-        jMember.setText(String.valueOf(bookings.getNumberOfPeople()));
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jPrice = new javax.swing.JTextField();
-        jPrice.setEditable(false);
-        jPrice.setText(bookings.getTotalPrice().toString());
         jPanel8 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         jStatus = new javax.swing.JTextField();
-        jStatus.setEditable(false);
-        jStatus.setText(bookings.getStatus());
         jPanel9 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jPatStatus = new javax.swing.JTextField();
-        jPatStatus.setEditable(false);
-        jPatStatus.setText(bookings.getPaymentStatus());
         jPanel10 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jPayDate = new javax.swing.JTextField();
-        jPayDate.setEditable(false);
-        jPayDate.setText(String.valueOf(bookings.getPaymentDate()));
         jPanel11 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jRequest = new javax.swing.JTextArea();
-        jRequest.setEditable(false);
-        jRequest.setLineWrap(true);
-        jRequest.setWrapStyleWord(true);
-        jRequest.setText(bookings.getRequests());
         btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Booking Information");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Thông Tin Đặt Chỗ");
 
-        jLabel2.setText("Booking ID");
+        jLabel2.setText("Mã Đặt Chỗ");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -125,7 +103,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel3.setText("Customer Name");
+        jLabel3.setText("Khách Hàng");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -148,7 +126,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel4.setText("Tour Name");
+        jLabel4.setText("Tên Tour");
 
         jTourName.setColumns(20);
         jTourName.setRows(5);
@@ -175,7 +153,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel5.setText("Package Name");
+        jLabel5.setText("Tên Gói");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -198,7 +176,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel6.setText("Booking Date");
+        jLabel6.setText("Ngày Đặt Chỗ");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -221,7 +199,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel7.setText("Total Member");
+        jLabel7.setText("Thành Viên");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -244,7 +222,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel8.setText("Total Price");
+        jLabel8.setText("Tổng Giá");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -253,9 +231,9 @@ public class BookingDetail extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addComponent(jPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,7 +245,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel9.setText("Status");
+        jLabel9.setText("Trạng Thái Booking");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -275,10 +253,10 @@ public class BookingDetail extends javax.swing.JFrame {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addComponent(jStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -290,7 +268,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel10.setText("Payment Status");
+        jLabel10.setText("Trạng Thái Thanh Toán");
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -298,10 +276,10 @@ public class BookingDetail extends javax.swing.JFrame {
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jPatStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGap(16, 16, 16))
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -313,7 +291,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel11.setText("Payment Date");
+        jLabel11.setText("Ngày Thanh Toán");
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -321,10 +299,10 @@ public class BookingDetail extends javax.swing.JFrame {
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
+                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(jPayDate, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addGap(17, 17, 17))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,7 +314,7 @@ public class BookingDetail extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel12.setText("Special Request");
+        jLabel12.setText("Yêu Cầu");
 
         jRequest.setColumns(20);
         jRequest.setRows(5);
@@ -364,21 +342,12 @@ public class BookingDetail extends javax.swing.JFrame {
         );
 
         btnClose.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnClose.setText("Close");
-        btnClose.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        btnClose.setText("Đóng");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(255, 255, 255))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -400,7 +369,8 @@ public class BookingDetail extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(320, 320, 320)
                         .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -437,6 +407,39 @@ public class BookingDetail extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void renderData(){
+        jBookID.setEditable(false);
+        jBookID.setText(String.valueOf(bookings.getBookingID()));
+        jCusName.setEditable(false);
+        jCusName.setText(bookings.getCustomerName());
+        jTourName.setEditable(false);
+        jTourName.setText(bookings.getTourName());
+        jTourName.setLineWrap(true);
+        jTourName.setWrapStyleWord(true);
+        jPackName.setEditable(false);
+        jPackName.setText(bookings.getPackageName());
+        jBookDate.setEditable(false);
+        jBookDate.setText(bookings.getBookingDate());
+        jMember.setEditable(false);
+        jMember.setText(String.valueOf(bookings.getNumberOfPeople()));
+        jPrice.setEditable(false);
+        if (bookings.getTotalPrice() != null) {
+            jPrice.setText(NumberFormat.getInstance().format(bookings.getTotalPrice()) + " VND");
+        } else {
+            jPrice.setText("N/A");
+        }
+        jStatus.setEditable(false);
+        jStatus.setText(bookings.getStatus());
+        jPatStatus.setEditable(false);
+        jPatStatus.setText(bookings.getPaymentStatus());
+        jPayDate.setEditable(false);
+        jPayDate.setText(bookings.getPaymentDate());
+        jRequest.setEditable(false);
+        jRequest.setLineWrap(true);
+        jRequest.setWrapStyleWord(true);
+        jRequest.setText(bookings.getRequests());
+    }
 
     /**
      * @param args the command line arguments

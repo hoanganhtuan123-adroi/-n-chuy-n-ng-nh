@@ -81,9 +81,9 @@ public class ButtonRenderedService extends AbstractCellEditor implements TableCe
                         try {
                             boolean isDeleted = serviceController.deleteService(serviceID);
                             if(isDeleted){
-                                JOptionPane.showMessageDialog(panel, "Employee deleted successfully");
+                                JOptionPane.showMessageDialog(null, "Employee deleted successfully");
                             } else {
-                                JOptionPane.showMessageDialog(panel, "Unable to delete employee");
+                                JOptionPane.showMessageDialog(null, "Unable to delete employee");
                             }
                         } catch (SQLException ex) {
                             throw new RuntimeException(ex);

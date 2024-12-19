@@ -9,6 +9,7 @@ import custome.ButtonRenderedService;
 import model.ServiceModel;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,18 +39,7 @@ public class ServiceView extends javax.swing.JFrame {
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String searchKey = jTextField1.getText().trim();
-                if(searchKey.isBlank() || searchKey.isEmpty()){
-                    JOptionPane.showMessageDialog(ServiceView.this, "Please enter the name's service.", "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    try {
-                        listServices = serviceController.searchServicesByName(searchKey);
-                        setServiceTableData(listServices);
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(ServiceView.this, "Error searching services.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
+
 
             }
         });
@@ -57,11 +47,37 @@ public class ServiceView extends javax.swing.JFrame {
         btnAddNew.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ServiceAddNew serviceAddNew = new ServiceAddNew();
+                ServiceAddNew serviceAddNew = null;
+                try {
+                    serviceAddNew = new ServiceAddNew(ServiceView.this);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 serviceAddNew.setVisible(true);
             }
         });
 
+        jTextField1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleSearchService();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearchService();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearchService();
+            }
+
+            public void handleSearchService()  {
+                handelSearch();
+            }
+        });
 
     }
 
@@ -204,7 +220,17 @@ public class ServiceView extends javax.swing.JFrame {
         setServiceTableData(services);
     }
 
+    public void handelSearch(){
+        String searchKey = jTextField1.getText().trim();
+            try {
+                listServices = serviceController.searchServicesByName(searchKey);
+                setServiceTableData(listServices);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(ServiceView.this, "Error searching services.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
 
+    }
 
 
     public static void main(String args[]) {

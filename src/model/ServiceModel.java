@@ -7,6 +7,7 @@ public class ServiceModel {
     private String serviceSupplier;
     private String servicePackageName;
     private int packageId;
+    private int supplierID;
     public ServiceModel(int serviceId, String serviceName, String serviceDescription, String servicePackageName, String serviceSupplier) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
@@ -21,6 +22,21 @@ public class ServiceModel {
         this.serviceDescription = serviceDescription;
         this.packageId = packageId;
         this.serviceSupplier = serviceSupplier;
+    }
+
+    public ServiceModel(String serviceName, String description, int supplierID, int packageID) {
+        this.serviceName = serviceName;
+        this.serviceDescription = description;
+        this.supplierID = supplierID;
+        this.packageId = packageID;
+    }
+
+    public int getSupplierID() {
+        return supplierID;
+    }
+
+    public void setSupplierID(int supplierID) {
+        this.supplierID = supplierID;
     }
 
     public int getPackageId() {

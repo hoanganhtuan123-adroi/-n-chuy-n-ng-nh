@@ -9,13 +9,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class PaymentController {
 
     public List<PaymentModel> getAllPayment() {
         List<PaymentModel> list = new ArrayList<>();
-        String query = "SELECT c.customer_id, c.name, " +
-                "t.tour_name, p.payment_date, p.status, p.payment_id " +
+        String query = "SELECT  DISTINCT p.payment_id, c.customer_id, c.name, " +
+                "t.tour_name, p.payment_date, p.status, " +
+                "IF(c.customer_id IS NULL, CONCAT('[DELETED] ', c.name), c.name) AS customer_display_name\n" +
                 "FROM customers AS c " +
                 "LEFT JOIN bookings AS b ON c.customer_id = b.customer_id " +
                 "LEFT JOIN payments AS p ON b.booking_id = p.booking_id " +
@@ -61,7 +63,9 @@ public class PaymentController {
         return list;
     }
 
-    public int getCustomerIdByTourNameAndTourIdAndCusName(String tourName, int tourId, String customerName) {
+
+    public String getCustomerIdByTourNameAndTourIdAndCusName(String tourName, int tourId, String customerName) {
+        String id = "";
         String query = "SELECT c.customer_id " +
                 "FROM customers AS c " +
                 "LEFT JOIN bookings AS b ON c.customer_id = b.customer_id " +
@@ -76,15 +80,16 @@ public class PaymentController {
             pstmt.setString(3, customerName);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("customer_id"); // Trả về customer_id nếu tìm thấy
+                    id = rs.getString("customer_id"); // Trả về customer_id nếu tìm thấy
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } return 0;
+        }  return id;
     }
 
-    public int getCustomerIdByCusName(String customerName) {
+    public String getCustomerIdByCusName(String customerName) {
+      String id = "";
         String query = "SELECT c.customer_id " +
                 "FROM customers AS c " +
                 "LEFT JOIN bookings AS b ON c.customer_id = b.customer_id " +
@@ -97,28 +102,19 @@ public class PaymentController {
             pstmt.setString(1, customerName);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("customer_id"); // Trả về customer_id nếu tìm thấy
+                    id = rs.getString("customer_id"); // Trả về customer_id nếu tìm thấy
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } return 0;
+        } return id;
     }
 
     public PaymentModel getPayment(String payment_id) throws SQLException {
-        System.out.println(("ID >>>>" + payment_id));
         if(payment_id.equals("Chưa thanh toán")){
             return null;
         }
         PaymentModel payment = null;
-//        String query = "SELECT p.payment_id, c.name, t.tour_name," +
-//                " p.payment_date, p.amount, p.payment_method, " +
-//                "p.transaction_id, p.status " +
-//                "FROM payments AS p " +
-//                "LEFT JOIN customers AS c ON c.customer_id = p.customer_id " +
-//                "LEFT JOIN bookings AS b ON b.booking_id = p.booking_id " +
-//                "LEFT JOIN tours AS t ON t.tour_id = b.tour_id " +
-//                "WHERE p.payment_id = ?";
 
         String query = "SELECT c.customer_id, c.name, " +
                 "t.tour_name, p.payment_date, p.status, p.payment_id, p.payment_method, p.transaction_id, p.amount " +
@@ -147,7 +143,7 @@ public class PaymentController {
         }
     }
 
-    public PaymentModel getPaymentByCustomerIDAndTourId(int customerId, int tourId) throws SQLException {
+    public PaymentModel getPaymentByCustomerIDAndTourId(String customerId, int tourId) throws SQLException {
         String query = "SELECT \n" +
                 "  c.customer_id, \n" +
                 "  c.name, \n" +
@@ -166,7 +162,7 @@ public class PaymentController {
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement pstm = con.prepareStatement(query)) {
-            pstm.setInt(1, customerId);
+            pstm.setString(1, customerId);
             pstm.setInt(2, tourId);
             try (ResultSet rs = pstm.executeQuery()) {
                 if (rs.next()) {
@@ -192,7 +188,7 @@ public class PaymentController {
         return null;
     }
 
-    public PaymentModel getPaymentByCustomerIDAndTourNull(int customerId, String cusName) throws SQLException {
+    public PaymentModel getPaymentByCustomerIDAndTourNull(String customerId, String cusName) throws SQLException {
         String query = "SELECT \n" +
                 "  c.customer_id, \n" +
                 "  c.name, \n" +
@@ -211,7 +207,7 @@ public class PaymentController {
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement pstm = con.prepareStatement(query)) {
-            pstm.setInt(1, customerId);
+            pstm.setString(1, customerId);
             pstm.setString(2, cusName);
             try (ResultSet rs = pstm.executeQuery()) {
                 if (rs.next()) {
@@ -275,27 +271,29 @@ public class PaymentController {
     }
 
     // Kiểm tra hoặc thêm mới Customer
-    public int checkOrAddCustomer(Connection conn, String name, String email, String phone, String address) throws SQLException {
+    public String checkOrAddCustomer(Connection conn, String name, String email, String phone, String address) throws SQLException {
         String checkCustomerQuery = "SELECT customer_id FROM customers WHERE email = ?";
         try (PreparedStatement checkStmt = conn.prepareStatement(checkCustomerQuery)) {
             checkStmt.setString(1, email);
             ResultSet rs = checkStmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("customer_id"); // Nếu tồn tại, trả về customer_id
+                return rs.getString("customer_id"); // Nếu tồn tại, trả về customer_id
             } else {
+                String customerID = "CUS" +"_"+ UUID.randomUUID().toString().substring(0, 5);
                 // Nếu không tồn tại, thêm mới Customer
-                String addCustomerQuery = "INSERT INTO customers (name, email, phone, address) VALUES (?, ?, ?, ?)";
+                String addCustomerQuery = "INSERT INTO customers (customer_id,name, email, phone, address) VALUES (?, ?, ?, ?, ?)";
                 try (PreparedStatement addStmt = conn.prepareStatement(addCustomerQuery, Statement.RETURN_GENERATED_KEYS)) {
-                    addStmt.setString(1, name);
-                    addStmt.setString(2, email);
-                    addStmt.setString(3, phone);
-                    addStmt.setString(4, address);
+                    addStmt.setString(1, customerID);
+                    addStmt.setString(2, name);
+                    addStmt.setString(3, email);
+                    addStmt.setString(4, phone);
+                    addStmt.setString(5, address);
                     addStmt.executeUpdate();
 
                     ResultSet resultSet = addStmt.getGeneratedKeys();
                     if (resultSet.next()) {
-                        return resultSet.getInt(1); // Trả về customer_id mới
+                        return resultSet.getString(1); // Trả về customer_id mới
                     }
                 }
             }
@@ -331,51 +329,41 @@ public class PaymentController {
     }
 
     // Thêm mới Booking
-    public  int addBooking(Connection conn, int customerId, int tourId, int packageId , int numberPeople ,double totalPrice, String paymentStatus) throws SQLException {
-        String addBookingQuery = "INSERT INTO bookings (customer_id, tour_id, package_id, booking_date, number_of_people,total_price, status, payment_status, " +
+    public  String addBooking(Connection conn, String customerId, int tourId, int packageId , int numberPeople ,double totalPrice, String paymentStatus) throws SQLException {
+       String booking_id = "BOK_" + UUID.randomUUID().toString().substring(0, 5);
+        String addBookingQuery = "INSERT INTO bookings (booking_id, customer_id, tour_id, package_id, booking_date, number_of_people,total_price, status, payment_status, " +
                 "payment_date, special_requests ) " +
-                "VALUES (?, ?, ?, NOW(), ?, ?, 'pending', ?, NOW(), 'NO')";
-        try (PreparedStatement stmt = conn.prepareStatement(addBookingQuery, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setInt(1, customerId);
-            stmt.setInt(2, tourId);
-            stmt.setDouble(3, packageId);
-            stmt.setInt(4, numberPeople);
-            stmt.setDouble(5, totalPrice);
-            stmt.setString(6, paymentStatus);
-            stmt.executeUpdate();
+                "VALUES (?, ?, ?, ?, NOW(), ?, ?, 'pending', ?, NOW(), 'NO')";
+        try (PreparedStatement stmt = conn.prepareStatement(addBookingQuery)) {
+            stmt.setString(1, booking_id);
+            stmt.setString(2, customerId);
+            stmt.setInt(3, tourId);
+            stmt.setDouble(4, packageId);
+            stmt.setInt(5, numberPeople);
+            stmt.setDouble(6, totalPrice);
+            stmt.setString(7, paymentStatus);
+            int rs = stmt.executeUpdate();
 
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1); // Trả về booking_id mới
+            if (rs > 0) {
+                return booking_id; // Trả về booking_id mới
             }
         }
         throw new SQLException("Không thể thêm mới Booking!");
     }
 
     // Tạo transaction_id
-    public  String generateTransactionId(Connection conn) throws SQLException {
-        String getMaxTransactionIdQuery = "SELECT MAX(CAST(SUBSTRING(transaction_id, 8) AS UNSIGNED)) AS max_id FROM payments";
-
-        int nextId = 1;
-        Random r = new Random();
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(getMaxTransactionIdQuery)) {
-            if (rs.next()) {
-                int maxId = rs.getInt("max_id");
-                nextId = r.nextInt(100 - 1) + maxId;
-            }
-        }
-        return "TXN1234" + nextId + r.nextInt(10 - 1);
+    public  String generateTransactionId()  {
+        return "TXN" + "_" + UUID.randomUUID().toString().substring(0, 5);
     }
 
-    public boolean addPayment(Connection conn, int bookingId, int customerId, String transactionId, String paymentDate, String paymentMethod, String status, double amount) throws SQLException {
+    public boolean addPayment(Connection conn, String bookingId, String customerId, String transactionId, String paymentDate, String paymentMethod, String status, double amount) throws SQLException {
         Random r = new Random();
         String paymentId = "PYC" + r.nextInt(100 - 1) + r.nextInt(20 - 1) + customerId;
         String addPaymentQuery = "INSERT INTO payments (payment_id, customer_id, booking_id, payment_date, amount, payment_method, transaction_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(addPaymentQuery)) {
             stmt.setString(1, paymentId);
-            stmt.setInt(2, customerId);
-            stmt.setInt(3, bookingId);
+            stmt.setString(2, customerId);
+            stmt.setString(3, bookingId);
             stmt.setDate(4, Date.valueOf(paymentDate));
             stmt.setDouble(5, amount);
             stmt.setString(6, paymentMethod);
@@ -474,14 +462,14 @@ public class PaymentController {
         return  priceTour;
     }
 
-    public String checkPaymentId(int customerID){
+    public String checkPaymentId(String customerID){
         String paymentID = "";
         String query = "select p.payment_id from payments as p \n" +
                 "left join customers as c on c.customer_id = p.customer_id\n" +
                 "where c.customer_id = ? ;";
         try(Connection con = DatabaseConnection.getConnection();
         PreparedStatement pstm = con.prepareStatement(query)){
-            pstm.setInt(1, customerID);
+            pstm.setString(1, customerID);
             ResultSet rs = pstm.executeQuery();
             if(rs.next()){
                 paymentID = rs.getString("payment_id");

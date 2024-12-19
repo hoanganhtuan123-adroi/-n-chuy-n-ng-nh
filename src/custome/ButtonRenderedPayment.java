@@ -82,15 +82,15 @@ public class ButtonRenderedPayment extends AbstractCellEditor implements TableCe
                         // Lấy paymentModel từ controller
                         if (paymentController.getPayment(paymentID) == null ) {
                             if(tourName.equals("Chưa chọn")){
-                                int customerID = paymentController.getCustomerIdByCusName(cusName);
+                                String customerID = paymentController.getCustomerIdByCusName(cusName);
                                 PaymentModel paymentModel = paymentController.getPaymentByCustomerIDAndTourNull(customerID, cusName);
                                 PaymentUpdate paymentUpdate = new PaymentUpdate(paymentModel, paymentView);
                                 paymentUpdate.setVisible(true);
                             } else {
                                 // Trường hợp paymentID không tồn tại
                                 int tourID = paymentController.getTourIdByName(con,tourName);
-                                int customerID = paymentController.getCustomerIdByTourNameAndTourIdAndCusName(tourName, tourID, cusName);
-                                if(customerID != 0){
+                                String customerID = paymentController.getCustomerIdByTourNameAndTourIdAndCusName(tourName, tourID, cusName);
+                                if(customerID != null && !customerID.isEmpty()){
                                     PaymentModel paymentModel = paymentController.getPaymentByCustomerIDAndTourId(customerID, tourID);
                                     PaymentUpdate paymentUpdate = new PaymentUpdate(paymentModel, paymentView);
                                     paymentUpdate.setVisible(true);
