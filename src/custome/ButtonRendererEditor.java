@@ -23,10 +23,14 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
     private JButton deleteButton;
     private JTable table;
     private CustomerView customerView;
+    private CustomerController customerController;
+    private CustomerModel customerModel;
 
     public ButtonRendererEditor(JTable table, CustomerView customerView) throws SQLException {
         this.table = table;
         this.customerView = customerView;
+        this.customerModel = new CustomerModel();
+        this.customerController = new CustomerController();
         panel = new JPanel(new FlowLayout());
 
         // Create buttons
@@ -64,19 +68,18 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
                 if (row >= 0) {
-//                    int customerId = customer.getCustomer_id();
                     // Lấy dữ liệu từ hàng đã chọn
                     Object customerIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
-                    int customerId = (customerIdObj instanceof Integer) ? (Integer) customerIdObj : Integer.parseInt(customerIdObj.toString());
-                    String customerName = (String) table.getValueAt(row, 1);
-                    String email = (String) table.getValueAt(row, 2);
-                    Object phoneObj = table.getValueAt(row, 3);
-                    String phone = phoneObj != null ? phoneObj.toString() : "";
-                    String address = (String) table.getValueAt(row, 4);
+                    String customerId = customerIdObj.toString();
+                    System.out.println(customerId);
+                    try {
+                        customerModel = customerController.getInformationCustomer(customerId);
+                        CustomerUpdate customerUpdate = new CustomerUpdate(customerModel, customerView);
+                        customerUpdate.setVisible(true);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
-                    // Hiển thị JFrame mới với thông tin chi tiết
-                    CustomerUpdate updateFrame = new CustomerUpdate(customerView, customerName, email, phone, address, Integer.valueOf(customerId));
-                    updateFrame.setVisible(true);
                 }
             }
         });
@@ -97,13 +100,17 @@ public class ButtonRendererEditor extends AbstractCellEditor implements TableCel
                     int row = table.getSelectedRow();
                     if(row >= 0){
                         Object customerIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
-                        int customerId = (customerIdObj instanceof Integer) ? (Integer) customerIdObj : Integer.parseInt(customerIdObj.toString());
+                        String customerId = customerIdObj.toString();
                         boolean isDeleted = customerController.deleteCustomer(customerId);
-
                         if(isDeleted){
-                            JOptionPane.showMessageDialog(table, "Delete successful");
+                            JOptionPane.showMessageDialog(panel, "Delete successful");
+                            try {
+                                customerView.loadCustomerData();
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         } else {
-                            JOptionPane.showMessageDialog(table, "Delete fail ");
+                            JOptionPane.showMessageDialog(panel, "Delete fail ");
                         }
                     }
                 }

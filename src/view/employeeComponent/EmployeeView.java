@@ -5,11 +5,10 @@
 package view.employeeComponent;
 
 import controller.EmployeeController;
-import custome.ButtonRenderedService;
 import custome.ButtonRendererEmployee;
 import model.EmployeeModel;
-import model.TourModel;
 
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +31,42 @@ public class EmployeeView extends javax.swing.JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setVisible(true);
+
+        btnAddNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EmployeeAddNew event = new EmployeeAddNew();
+                event.setVisible(true);
+            }
+        });
+
+        jTextSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleSearchEmployeeByFullName();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearchEmployeeByFullName();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearchEmployeeByFullName();
+            }
+
+        });
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleSearchEmployeeByFullName();
+
+            }
+        });
+
+
     }
 
     /**
@@ -55,31 +90,15 @@ public class EmployeeView extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Employee Information");
+        jLabel1.setText("Quản lý nhân viên");
 
         btnAddNew.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAddNew.setText("Add New");
-        btnAddNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EmployeeAddNew event = new EmployeeAddNew();
-                event.setVisible(true);
-            }
-        });
+        btnAddNew.setText("Thêm Mới");
 
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String search = jTextSearch.getText();
-                EmployeeController controller = new EmployeeController();
-               List<EmployeeModel> listEmployee = controller.searchEmployeeByFullName(search);
-               setTableData(listEmployee);
+        jLabel2.setText("Nhập tên nhân viên");
 
-            }
-        });
+        btnSearch.setText("Tìm kiếm");
 
-        jLabel2.setText("Search For");
-
-        btnSearch.setText("Search");
         jTableModel = new DefaultTableModel(new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
@@ -87,8 +106,8 @@ public class EmployeeView extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
         },
                 new String [] {
-                        "Employee ID", "Account", "Full Name", "Email", "Phone", "Address", "Position", "Department", "Action"
-                }){
+                        "Mã Nhân Viên", "Tài Khoản", "Họ Tên Nhân Viên", "Email", "Điện Thoại", "Địa Chỉ", "Vị Trí", "Khoa", "Action"
+                }) {
             boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, false, false, false, true
             };
@@ -98,44 +117,39 @@ public class EmployeeView extends javax.swing.JFrame {
             }
         };
         jTable1.setModel(jTableModel);
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRendererEmployee(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRendererEmployee(jTable1));
-        jTable1.setRowHeight(40);
+        jScrollPane1.setViewportView(jTable1);
 
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(50); // Employee ID
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(60); // Account ID
-        jTable1.getColumnModel().getColumn(2).setPreferredWidth(160); // Full Name
-        jTable1.getColumnModel().getColumn(3).setPreferredWidth(100); // Email
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRendererEmployee(jTable1, EmployeeView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRendererEmployee(jTable1, EmployeeView.this));
+        jTable1.setRowHeight(75);
+
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(100); // Employee ID
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(120); // Account ID
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(130); // Full Name
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(120); // Email
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(100); // Phone
-        jTable1.getColumnModel().getColumn(5).setPreferredWidth(150); // Address
-        jTable1.getColumnModel().getColumn(6).setPreferredWidth(100); // Position
+        jTable1.getColumnModel().getColumn(5).setPreferredWidth(100); // Address
+        jTable1.getColumnModel().getColumn(6).setPreferredWidth(120); // Position
         jTable1.getColumnModel().getColumn(7).setPreferredWidth(80); // Departure
         jTable1.getColumnModel().getColumn(8).setPreferredWidth(220); // Action
-
-        jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnAddNew)
-                .addGap(177, 177, 177)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnSearch)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(147, 147, 147))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAddNew)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnSearch)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,7 +168,7 @@ public class EmployeeView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setTableData(List<EmployeeModel> employees) {
+    private void setTableData(List<EmployeeModel> employees) {
         jTableModel.setRowCount(0); // Xóa dữ liệu cũ
         for (EmployeeModel employee : employees) {
             Object[] row = {
@@ -175,7 +189,11 @@ public class EmployeeView extends javax.swing.JFrame {
         List<EmployeeModel> employees = EmployeeController.getAllEmployee();
         setTableData(employees);
     }
-
+    private void handleSearchEmployeeByFullName() {
+        String search = jTextSearch.getText();
+        EmployeeController controller = new EmployeeController();
+        setTableData(controller.searchEmployeeByFullName(search));
+    }
     /**
      * @param args the command line arguments
      */
@@ -219,6 +237,6 @@ public class EmployeeView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextSearch;
-    private DefaultTableModel jTableModel;
+    private javax.swing.table.DefaultTableModel jTableModel;
     // End of variables declaration//GEN-END:variables
 }

@@ -3,7 +3,7 @@ package model;
 import java.sql.Timestamp;
 
 public class IssueModel {
-    private int issueID;
+    private String issueID;
     private String issueTitle;
     private String issueDescription;
     private Timestamp issueDate;
@@ -12,7 +12,17 @@ public class IssueModel {
     private String employeeName;
     private String accountEmployee;
 
-    public IssueModel(int issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority, String employeeName, String accountEmployee) {
+    public IssueModel(String issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority, String employeeName) {
+        this.issueID = issueID;
+        this.issueTitle = issueTitle;
+        this.issueDescription = issueDescription;
+        this.issueDate = issueDate;
+        this.issueStatus = issueStatus;
+        this.issuePriority = issuePriority;
+        this.employeeName = employeeName;
+    }
+
+    public IssueModel(String issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority, String employeeName, String accountEmployee) {
         this.issueID = issueID;
         this.issueTitle = issueTitle;
         this.issueDescription = issueDescription;
@@ -23,7 +33,7 @@ public class IssueModel {
         this.accountEmployee = accountEmployee;
     }
 
-    public IssueModel(int issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority) {
+    public IssueModel(String issueID, String issueTitle, String issueDescription, Timestamp issueDate, String issueStatus, String issuePriority) {
         this.issueID = issueID;
         this.issueTitle = issueTitle;
         this.issueDescription = issueDescription;
@@ -57,11 +67,11 @@ public class IssueModel {
         this.employeeName = employeeName;
     }
 
-    public int getIssueID() {
+    public String getIssueID() {
         return issueID;
     }
 
-    public void setIssueID(int issueID) {
+    public void setIssueID(String issueID) {
         this.issueID = issueID;
     }
 

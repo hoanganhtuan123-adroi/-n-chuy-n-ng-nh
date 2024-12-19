@@ -6,12 +6,16 @@ package view.BookingComponent;
 
 import controller.BookingController;
 import custome.ButtonRenderedBooking;
+import custome.MultiLineTableCell;
 import model.BookingModel;
 
+import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -26,10 +30,51 @@ public class BookingView extends javax.swing.JFrame {
     public BookingView() throws SQLException {
         this.bookingController = new BookingController();
         initComponents();
+        handleSetViewTable();
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
 
         loadCustomerData();
+
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+
+        jTextSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener()  {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleSearchBooking();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearchBooking();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearchBooking();
+            }
+        });
+
+        btnAddNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    BookingAddNew bookingAddNew = new BookingAddNew();
+                    bookingAddNew.setVisible(true);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            }
+        });
     }
 
     /**
@@ -52,33 +97,30 @@ public class BookingView extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Booking Management");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Quản Lý Đặt Chỗ");
 
         btnAddNew.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAddNew.setText("Add New");
+        btnAddNew.setText("Thêm Mới");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setText("Search For");
+        jLabel2.setText("Nhập Tên Khách Hàng");
 
         jTextSearch.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         btnSearch.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnSearch.setText("Search");
-        btnSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String textSearch = jTextSearch.getText().trim();
-                setTableData(bookingController.searchByName(textSearch));
-            }
-        });
-        tableModel = new DefaultTableModel(new Object [][] {
+        btnSearch.setText("Tìm Kiếm");
+
+        jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        tableModel = new DefaultTableModel( new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null}
         },
                 new String [] {
-                        "Booking ID", "Customer Name", "Tour Name", "Booking Date", "Total Price", "Status", "Action"
+                        "Mã Đặt Chỗ", "Khách Hàng", "Tên Tour", "Ngày Đặt", "Giá Tour", "Trạng Thái", "Action"
                 }) {
             boolean[] canEdit = new boolean [] {
                     false, false, false, false, false, false, true
@@ -89,45 +131,28 @@ public class BookingView extends javax.swing.JFrame {
             }
         };
 
-        jTable1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
         jTable1.setModel(tableModel);
         jTable1.setRowHeight(45);
-
-        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedBooking(jTable1));
-        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedBooking(jTable1));
-
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(20);
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(60);
-        jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
-        jTable1.getColumnModel().getColumn(3).setPreferredWidth(80);
-        jTable1.getColumnModel().getColumn(4).setPreferredWidth(80);
-        jTable1.getColumnModel().getColumn(5).setPreferredWidth(80);
-        jTable1.getColumnModel().getColumn(6).setPreferredWidth(140);
-
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(169, 169, 169))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAddNew)
-                        .addGap(213, 213, 213)
+                        .addGap(156, 156, 156)
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(btnSearch)))
                 .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,7 +171,7 @@ public class BookingView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setTableData(List<BookingModel> bookings) {
+    private void setTableData(List<BookingModel> bookings) {
         tableModel.setRowCount(0); // Xóa dữ liệu cũ
         for (BookingModel booking : bookings) {
             Object[] row = {
@@ -154,19 +179,40 @@ public class BookingView extends javax.swing.JFrame {
                     booking.getCustomerName(),
                     booking.getTourName(),
                     booking.getBookingDate(),
-                    booking.getTotalPrice(),
-                    booking.getStatus(),
+                    NumberFormat.getInstance().format(booking.getTotalPrice()) + " VND",
+                    booking.getStatus()
             };
             tableModel.addRow(row);
         }
     }
 
-    private void loadCustomerData() throws SQLException {
+    public void loadCustomerData() throws SQLException {
         List<BookingModel> bookings = bookingController.getAllBookings();
         setTableData(bookings);
     }
 
+    private void handleSetViewTable(){
+        jTable1.setRowHeight(50);
 
+        jTable1.getColumn("Action").setCellRenderer(new ButtonRenderedBooking(jTable1, BookingView.this));
+        jTable1.getColumn("Action").setCellEditor(new ButtonRenderedBooking(jTable1, BookingView.this));
+
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(20);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(60);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(80);
+        jTable1.getColumnModel().getColumn(4).setPreferredWidth(80);
+        jTable1.getColumnModel().getColumn(5).setPreferredWidth(80);
+        jTable1.getColumnModel().getColumn(6).setPreferredWidth(140);
+        for(int i = 0; i < jTable1.getColumnCount() - 1; i++){
+            jTable1.getColumnModel().getColumn(i).setCellRenderer(new MultiLineTableCell());
+        }
+    }
+
+    private void handleSearchBooking(){
+        String textSearch = jTextSearch.getText().trim();
+        setTableData(bookingController.searchByName(textSearch));
+    }
     /**
      * @param args the command line arguments
      */
@@ -214,6 +260,6 @@ public class BookingView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextSearch;
-    private DefaultTableModel tableModel;
+    private javax.swing.table.DefaultTableModel tableModel;
     // End of variables declaration//GEN-END:variables
 }

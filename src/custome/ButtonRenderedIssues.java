@@ -3,6 +3,7 @@ package custome;
 import controller.IssueController;
 import model.IssueModel;
 import view.IssuesComponent.IssueUpdate;
+import view.IssuesComponent.IssuesView;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -16,13 +17,14 @@ public class ButtonRenderedIssues extends AbstractCellEditor implements TableCel
     private JPanel panel;
     private JButton updateButton;
     private JTable table;
+    private IssuesView issuesView;
 
-    public ButtonRenderedIssues(JTable table) {
+    public ButtonRenderedIssues(JTable table, IssuesView issuesView) {
         this.table = table;
-
+        this.issuesView = issuesView;
         // Tạo panel chứa các nút
         panel = new JPanel(new FlowLayout());
-        updateButton = new JButton("Update");
+        updateButton = new JButton("Cập Nhập");
 
         // Thêm nút vào panel
         panel.add(updateButton);
@@ -42,7 +44,7 @@ public class ButtonRenderedIssues extends AbstractCellEditor implements TableCel
                         }
 
                         // Chuyển đổi Issue ID sang kiểu Integer
-                        int issueID = (issueIdObj instanceof Integer) ? (Integer) issueIdObj : Integer.parseInt(issueIdObj.toString());
+                        String issueID = issueIdObj.toString();
 
                         // Lấy thông tin Issue từ controller
                         IssueModel issues = IssueController.getIssueById(issueID);
@@ -52,7 +54,7 @@ public class ButtonRenderedIssues extends AbstractCellEditor implements TableCel
                         }
 
                         // Mở giao diện cập nhật Issue
-                        IssueUpdate issueUpdate = new IssueUpdate(issues);
+                        IssueUpdate issueUpdate = new IssueUpdate(issues, issuesView);
                         issueUpdate.setVisible(true);
 
                         // Dừng chỉnh sửa để cập nhật bảng

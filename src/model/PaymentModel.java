@@ -4,8 +4,8 @@ import java.sql.Date;
 
 public class PaymentModel {
     private String paymentID;
-    private int customerID;
-    private int bookingID;
+    private String customerID;
+    private String bookingID;
     private Date paymentDate;
     private String amount;
     private String paymentMethod;
@@ -30,24 +30,6 @@ public class PaymentModel {
         this.paymentDate = paymentDate;
     }
 
-    public PaymentModel(String paymentID, int customerID, int bookingID, Date paymentDate, String amount, String paymentMethod, String transactionID, String paymentStatus) {
-        this.paymentID = paymentID;
-        this.customerID = customerID;
-        this.bookingID = bookingID;
-        this.paymentDate = paymentDate;
-        this.amount = amount;
-        this.paymentMethod = paymentMethod;
-        this.transactionID = transactionID;
-        this.paymentStatus = paymentStatus;
-    }
-
-    public PaymentModel(String paymentID, Date paymentDate, String tourName, String customerName, String paymentStatus) {
-        this.paymentID = paymentID;
-        this.paymentDate = paymentDate;
-        this.tourName = tourName;
-        this.customerName = customerName;
-        this.paymentStatus = paymentStatus;
-    }
 
     public PaymentModel(String paymentId, String customerName, String tourName, Date paymentDate, String status) {
         this.paymentID = paymentId;
@@ -77,6 +59,15 @@ public class PaymentModel {
         this.transactionID = transactionId;
         this.paymentStatus = status;
         this.paymentDate = paymentDate;
+    }
+
+    public PaymentModel(String paymentId, String customerIdDisplay, String customerDisplayName, String tourName, Date paymentDate, String status) {
+        this.paymentID = paymentId;
+        this.customerID = customerIdDisplay;
+        this.customerName = customerDisplayName;
+        this.tourName = tourName;
+        this.paymentDate = paymentDate;
+        this.paymentStatus = status;
     }
 
     public int getTourId() {
@@ -137,11 +128,11 @@ public class PaymentModel {
         this.paymentID = paymentID;
     }
 
-    public int getCustomerID() {
+    public String getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(int customerID) {
+    public void setCustomerID(String customerID) {
         this.customerID = customerID;
     }
 
@@ -153,11 +144,11 @@ public class PaymentModel {
         this.paymentDate = paymentDate;
     }
 
-    public int getBookingID() {
+    public String getBookingID() {
         return bookingID;
     }
 
-    public void setBookingID(int bookingID) {
+    public void setBookingID(String bookingID) {
         this.bookingID = bookingID;
     }
 

@@ -4,16 +4,14 @@
  */
 package view.IssuesComponent;
 
-import controller.EmployeeController;
 import controller.IssueController;
 import model.IssueModel;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Date;
 
 /**
  *
@@ -25,17 +23,37 @@ public class IssueUpdate extends javax.swing.JFrame {
     private List<String> listPriority;
     private List<String> listEmployee;
     private IssueController issueController;
+    private IssuesView issuesView;
     /**
      * Creates new form IssueUpdate
      */
-    public IssueUpdate(IssueModel issues) throws SQLException {
+    public IssueUpdate(IssueModel issues, IssuesView issuesView) throws SQLException {
         this.issues = issues;
+        this.issuesView = issuesView;
         this.issueController = new IssueController();
         this.listStatus = issueController.getStatusList();
         this.listPriority = issueController.getPriorityList();
         this.listEmployee = issueController.getEmployee();
         initComponents();
         setLocationRelativeTo(null);
+        setDefaultValueToBoxModel();
+        renderData();
+
+        btnUpdate.addActionListener((e) -> {
+            try {
+                updateIssue();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        btnDelete.addActionListener((e) -> {
+            try {
+                deleteIssue();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 
     /**
@@ -51,22 +69,14 @@ public class IssueUpdate extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jID = new javax.swing.JTextField();
-        jID.setEditable(false);
-        jID.setText(String.valueOf(issues.getIssueID()));
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTitle = new javax.swing.JTextArea();
-        jTitle.setText(issues.getIssueTitle());
-        jTitle.setLineWrap(true);
-        jTitle.setWrapStyleWord(true);
         jPanel4 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jDescription = new javax.swing.JTextArea();
-        jDescription.setText(issues.getIssueDescription());
-        jDescription.setLineWrap(true);
-        jDescription.setWrapStyleWord(true);
         jPanel5 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
@@ -75,8 +85,7 @@ public class IssueUpdate extends javax.swing.JFrame {
         jStatus = new javax.swing.JComboBox<>();
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jCreated = new javax.swing.JTextField();
-        jCreated.setText(issues.getIssueDate().toString());
+        jCreated = new com.toedter.calendar.JDateChooser();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -87,11 +96,11 @@ public class IssueUpdate extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Issue Information");
+        jLabel1.setText("Cập Nhập Vấn Đề");
 
-        jLabel3.setText("Issue ID");
+        jLabel3.setText("Mã Vấn Đề");
 
-        jLabel4.setText("Issue Title");
+        jLabel4.setText("Tên Vấn Đề");
 
         jTitle.setColumns(20);
         jTitle.setRows(5);
@@ -118,7 +127,7 @@ public class IssueUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel5.setText("Description");
+        jLabel5.setText("Mô Tả");
 
         jDescription.setColumns(20);
         jDescription.setRows(5);
@@ -131,18 +140,19 @@ public class IssueUpdate extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel5)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel5)
+                .addContainerGap(55, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -152,8 +162,8 @@ public class IssueUpdate extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addGap(37, 37, 37)
-                .addComponent(jID, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(jID, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -174,15 +184,11 @@ public class IssueUpdate extends javax.swing.JFrame {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jLabel6.setText("Status");
+        jLabel6.setText("Trạng Thái");
 
-        jLabel7.setText("Priority");
-        DefaultComboBoxModel<String> modelPriority = new DefaultComboBoxModel<>();
-        for(String priority : listPriority){
-            modelPriority.addElement(priority);
-        }
-        jPriority.setModel(modelPriority);
-        jPriority.setSelectedItem(issues.getIssuePriority());
+        jLabel7.setText("Độ Ưu Tiên");
+
+        jPriority.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -205,13 +211,8 @@ public class IssueUpdate extends javax.swing.JFrame {
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-        for(String status : listStatus){
-            model.addElement(status);
-        }
+        jStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jStatus.setModel(model);
-        jStatus.setSelectedItem(issues.getIssueStatus());
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -220,8 +221,8 @@ public class IssueUpdate extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
+                .addComponent(jStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
@@ -236,7 +237,7 @@ public class IssueUpdate extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel8.setText("Created At");
+        jLabel8.setText("Ngày Tạo");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -245,47 +246,29 @@ public class IssueUpdate extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addGap(26, 26, 26)
-                .addComponent(jCreated, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(jCreated, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jCreated, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jCreated, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnUpdate.setText("Update");
-        btnUpdate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    updateIssue();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
+        btnUpdate.setText("Cập Nhập");
+
         btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDelete.setText("Delete");
-        btnDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteIssue();
-            }
-        });
-        jLabel2.setText("Assign task to employee");
-        DefaultComboBoxModel<String> modelEmployee = new DefaultComboBoxModel<>();
-        for(String employee : listEmployee){
-            modelEmployee.addElement(employee);
-        }
-        jEmployee.setModel(modelEmployee);
-        jEmployee.setSelectedItem(issues.getEmployeeName() + " - " + issues.getAccountEmployee());
+        btnDelete.setText("Xóa");
+
+        jLabel2.setText("Nhân Viên Đảm Nhận");
+
+        jEmployee.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -316,50 +299,44 @@ public class IssueUpdate extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(105, 105, 105))
-            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(274, 274, 274)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(201, 201, 201)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(99, 99, 99)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(55, 55, 55))
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(182, 182, 182))
+                .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(99, 99, 99)
+                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(232, 232, 232))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUpdate)
                     .addComponent(btnDelete))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void deleteIssue(){
+    private void deleteIssue() throws SQLException {
         int result = JOptionPane.showConfirmDialog(
                 null,
                 "Bạn có chắc chắn muốn xóa dữ liệu này?",
@@ -369,38 +346,76 @@ public class IssueUpdate extends javax.swing.JFrame {
         );
         if(result == JOptionPane.YES_OPTION){
             String id = jID.getText();
-            IssueController issueController = new IssueController();
-            if(issueController.deleteIssue(Integer.parseInt(id))){
-                JOptionPane.showMessageDialog(null, "Issue Deleted");
+            if(issueController.deleteIssue(id)){
+                JOptionPane.showMessageDialog(IssueUpdate.this, "Xóa Thành Công");
+                issuesView.loadIssueData();
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(null, "Issue Not Deleted");
+                JOptionPane.showMessageDialog(IssueUpdate.this, "Xóa Thành Công");
             }
         }
     }
 
 
-    public void updateIssue() throws SQLException {
+    private void updateIssue() throws SQLException {
         String id = jID.getText();
         String title = jTitle.getText();
         String description = jDescription.getText();
         String status = jStatus.getSelectedItem().toString();
         String priority = jPriority.getSelectedItem().toString();
-        String created = jCreated.getText();
+        Date created_date = jCreated.getDate();
+        Timestamp created = new Timestamp(created_date.getTime());
         String employee = jEmployee.getSelectedItem().toString();
         int indexOfEm = employee.indexOf(" - ");
         String empName = employee.substring(0, indexOfEm).trim();
         String account = employee.substring(indexOfEm + 3).trim();
-        IssueModel issueModel = new IssueModel(Integer.valueOf(id),title,description, Timestamp.valueOf(created),status,priority, empName, account);
-        IssueController issueController = new IssueController();
+
+        IssueModel issueModel = new IssueModel(id,title,description, created,status,priority, empName, account);
 
         if(issueController.updateIssue(issueModel)){
-            JOptionPane.showMessageDialog(null, "Updated success!");
+            JOptionPane.showMessageDialog(IssueUpdate.this, "Cập Nhập Thành Công!");
+            issuesView.loadIssueData();
             dispose();
         } else {
-            JOptionPane.showMessageDialog(null, "Updated fail!");
+            JOptionPane.showMessageDialog(IssueUpdate.this, "Cập Nhập Thất Bại");
         }
 
+    }
+
+    private void renderData(){
+        jID.setEditable(false);
+        jID.setText(String.valueOf(issues.getIssueID()));
+        jTitle.setText(issues.getIssueTitle());
+        jTitle.setLineWrap(true);
+        jTitle.setWrapStyleWord(true);
+        jDescription.setText(issues.getIssueDescription());
+        jDescription.setLineWrap(true);
+        jDescription.setWrapStyleWord(true);
+        jCreated.setDate(issues.getIssueDate());
+        jStatus.setSelectedItem(issues.getIssueStatus());
+        jPriority.setSelectedItem(issues.getIssuePriority());
+    }
+
+    private void setDefaultValueToBoxModel(){
+
+        DefaultComboBoxModel<String> modelPriority = new DefaultComboBoxModel<>();
+        for(String priority : listPriority){
+            modelPriority.addElement(priority);
+        }
+        jPriority.setModel(modelPriority);
+
+        DefaultComboBoxModel<String> modelStatus = new DefaultComboBoxModel<>();
+        for(String status : listStatus){
+            modelStatus.addElement(status);
+        }
+        jStatus.setModel(modelStatus);
+
+        DefaultComboBoxModel<String> modelEmployee = new DefaultComboBoxModel<>();
+        for(String employee : listEmployee){
+            modelEmployee.addElement(employee);
+        }
+
+        jEmployee.setModel(modelEmployee);
     }
 
     /**
@@ -441,7 +456,7 @@ public class IssueUpdate extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JTextField jCreated;
+    private com.toedter.calendar.JDateChooser jCreated;
     private javax.swing.JTextArea jDescription;
     private javax.swing.JComboBox<String> jEmployee;
     private javax.swing.JTextField jID;

@@ -40,38 +40,30 @@ public class ServiceController {
         return serviceModels;
     }
 
-    public List<ServiceModel> searchServicesByName(String serviceName) throws SQLException {
+    public List<ServiceModel> searchServicesByName(String service_Name) throws SQLException {
         List<ServiceModel> services = new ArrayList<>();
         String query = """
-        SELECT 
-            s.service_id,
-            s.service_name,
-            s.description,
-            p.package_name,
-            supp.supplier_name,
-            ps.included
-        FROM services s
-        LEFT JOIN package_services ps ON s.service_id = ps.service_id
-        LEFT JOIN packages p ON ps.package_id = p.package_id
-        LEFT JOIN supplier_services ss ON s.service_id = ss.service_id
-        LEFT JOIN suppliers supp ON ss.supplier_id = supp.supplier_id
-        WHERE s.service_name LIKE ?;
-    """;
+          SELECT  s.service_id, s.service_name, s.description, sup.supplier_name, p.package_name
+               FROM services AS s
+               LEFT JOIN suppliers AS sup ON s.supplier_id = sup.supplier_id
+               LEFT JOIN packages AS p ON s.package_id = p.package_id\s
+               where s.service_name Like ?;
+          """;
 
         try (Connection con = DatabaseConnection.getConnection();
              PreparedStatement pstmt = con.prepareStatement(query)) {
 
-            pstmt.setString(1, "%" + serviceName + "%");
+            pstmt.setString(1, "%" + service_Name + "%");
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 int serviceId = rs.getInt("service_id");
-                String serviceNameResult = rs.getString("service_name");
+                String serviceName = rs.getString("service_name");
                 String description = rs.getString("description");
                 String packageName = rs.getString("package_name");
                 String supplierName = rs.getString("supplier_name");
 
-                ServiceModel service = new ServiceModel(serviceId, serviceNameResult, description, packageName, supplierName);
+                ServiceModel service = new ServiceModel(serviceId, serviceName, description, packageName, supplierName);
                 services.add(service);
             }
         }
@@ -152,6 +144,49 @@ public class ServiceController {
             pstmt.setInt(1, serviceID);
             int rowsUpdated = pstmt.executeUpdate();
             return rowsUpdated > 0;
+        }
+    }
+
+    public List<String> getSupplier() throws SQLException {
+        List<String> listSupplier = new ArrayList<>();
+        String query = "select distinct(supplier_name) from suppliers;";
+        try(Connection con = DatabaseConnection.getConnection();
+        PreparedStatement pstm = con.prepareStatement(query)){
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                listSupplier.add(rs.getString("supplier_name"));
+            }
+        }
+        return listSupplier;
+    }
+
+    public int getSupplierID(String supplierName) throws SQLException {
+        int supplierID = 0;
+        String query = "Select supplier_id from suppliers where supplier_name = ?;";
+        try(Connection con = DatabaseConnection.getConnection();
+        PreparedStatement pstm = con.prepareStatement(query)){
+            pstm.setString(1, supplierName);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    supplierID = rs.getInt("supplier_id");
+                }
+            }
+        }
+        return supplierID;
+    }
+
+    public boolean handleAddNewService(ServiceModel services){
+        String query = "INSERT INTO services(service_name, description, supplier_id, package_id) VALUES(?,?,?,?); ";
+        try(Connection con = DatabaseConnection.getConnection();
+            PreparedStatement pstm = con.prepareStatement(query)){
+            pstm.setString(1, services.getServiceName());
+            pstm.setString(2, services.getServiceDescription());
+            pstm.setInt(3, services.getSupplierID());
+            pstm.setInt(4, services.getPackageId());
+            int rowsUpdated = pstm.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

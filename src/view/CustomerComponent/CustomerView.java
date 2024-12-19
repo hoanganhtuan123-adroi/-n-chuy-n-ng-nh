@@ -33,6 +33,32 @@ public class CustomerView extends javax.swing.JFrame {
         this.setResizable(false);
         customerController = new CustomerController();
         loadCustomerData();
+
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CustomerAddNew customerAddNew = new CustomerAddNew(CustomerView.this);
+                customerAddNew.setVisible(true);
+            }
+        });
+
+        jSearchText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                handleSearchCustomer();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                handleSearchCustomer();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                handleSearchCustomer();
+            }
+
+        });
     }
 
     public void setTableData(Object[][] data) {
@@ -111,34 +137,12 @@ public class CustomerView extends javax.swing.JFrame {
 
         btnSearch.setText("Tìm Kiếm");
 
-        jSearchText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                handleSearchCustomer();
-            }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                handleSearchCustomer();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                handleSearchCustomer();
-            }
-
-        });
 
         jLabel2.setText("Nhập tên khách hàng");
 
         btnAdd.setText("Thêm mới");
-        btnAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CustomerAddNew customerAddNew = new CustomerAddNew(CustomerView.this);
-                customerAddNew.setVisible(true);
-            }
-        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(

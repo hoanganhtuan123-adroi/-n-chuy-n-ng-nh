@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 public class ButtonRenderedBooking extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
 
@@ -23,8 +24,10 @@ public class ButtonRenderedBooking extends AbstractCellEditor implements TableCe
     private BookingModel bookingModel;
     private BookingDetail bookingDetail;
     private BookingUpdate bookingUpdate;
-    public ButtonRenderedBooking(JTable table){
+    private BookingView bookingView;
+    public ButtonRenderedBooking(JTable table, BookingView bookingView){
         this.table = table;
+        this.bookingView = bookingView;
         this.bookingController = new BookingController();
         panel = new JPanel(new FlowLayout());
 
@@ -44,7 +47,7 @@ public class ButtonRenderedBooking extends AbstractCellEditor implements TableCe
                 int row = table.getSelectedRow();
                 if (row >= 0) {
                     Object bookingIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là serviceId
-                    int bookingID = (bookingIdObj instanceof Integer) ? (Integer) bookingIdObj : Integer.parseInt(bookingIdObj.toString());
+                    String bookingID = bookingIdObj.toString();
                     try {
                         bookingModel = bookingController.getBooking(bookingID);
                         bookingDetail = new BookingDetail(bookingModel);
@@ -63,18 +66,51 @@ public class ButtonRenderedBooking extends AbstractCellEditor implements TableCe
                 int row = table.getSelectedRow();
                 if (row >= 0) {
                     Object bookingIdObj = table.getValueAt(row, 0);
-                    int bookingID = (bookingIdObj instanceof Integer) ? (Integer) bookingIdObj : Integer.parseInt(bookingIdObj.toString());
+                    String bookingID = bookingIdObj.toString();
                     try {
                         bookingModel = bookingController.getBooking(bookingID);
                         bookingUpdate = new BookingUpdate(bookingModel);
                         bookingUpdate.setVisible(true);
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
+                    } catch (ParseException ex) {
+                        throw new RuntimeException(ex);
                     }
                 }
             }
         });
 
+        deleteButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Bạn có chắc chắn muốn xóa dữ liệu này?",
+                        "Xác nhận xóa",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if(result == JOptionPane.YES_OPTION){
+                    int row = table.getSelectedRow();
+                    if(row >= 0){
+                        Object bookingIdObj = table.getValueAt(row, 0); // Giả sử cột đầu tiên là customerId
+                        String bookingID = bookingIdObj.toString();
+                        try {
+                            boolean isDeleted =bookingController.deleteBooking(bookingID);
+                            if(isDeleted){
+                                JOptionPane.showMessageDialog(panel, "Xóa tour thành công!");
+                                bookingView.loadCustomerData();
+                            } else {
+                                JOptionPane.showMessageDialog(panel, "Không thể xóa tour này!");
+                            }
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+                }
+            }
+        });
    }
 
 

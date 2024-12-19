@@ -373,7 +373,7 @@ public class PaymentUpdate extends javax.swing.JFrame {
         jStatus.setEditable(false);
     }
     
-     private void getPriceTour() {
+    private void getPriceTour() {
         Timer timer = new Timer(1000, null); // Timer với độ trễ 300ms
         timer.setRepeats(false); // Chỉ chạy một lần khi được kích hoạt
 
@@ -400,7 +400,6 @@ public class PaymentUpdate extends javax.swing.JFrame {
         });
          System.out.println("CHECK PRICE >>>" + priceTour);
     }
-
 
     private void addKeyListenerAndCheckPrice(JTextField textField) {
         textField.addKeyListener(new KeyAdapter() {
@@ -439,7 +438,6 @@ public class PaymentUpdate extends javax.swing.JFrame {
             }
         });
     }
-
     
     private void updatePaymentStatus(long amount, long priceTour) throws SQLException {
         // Lấy giá tour và loại bỏ các ký tự không cần thiết
@@ -461,7 +459,6 @@ public class PaymentUpdate extends javax.swing.JFrame {
        
     }
 
-    
     private void updatePayment() throws SQLException {
         String paymentID = jPayID.getText().trim();
         String customerName = jCusName.getText().trim();
@@ -476,27 +473,26 @@ public class PaymentUpdate extends javax.swing.JFrame {
         || paymentMethod.isEmpty() || transactionId.isEmpty() || status.isEmpty() || amount.isEmpty()){
             JOptionPane.showMessageDialog(rootPane, "Vui lòng điền đầy đủ thông tin!", "Error", JOptionPane.WARNING_MESSAGE);
         } else {
-            int customerId = paymentController.getCustomerIdByCusName(customerName);
+            String customerId = paymentController.getCustomerIdByCusName(customerName);
             if(paymentController.checkPaymentId(customerId).equals("") || paymentController.checkPaymentId(customerId) == null ){
                 customerModel = customerController.getInformationCustomer(customerId);
                 String cusEmail = customerModel.getEmail();
                 String cusPhone = customerModel.getPhone();
                 String cusAdrress = customerModel.getAddress();
                 PaymentModel paymentModel = new PaymentModel(tourName, cusEmail, cusPhone, cusAdrress, customerName, status, paymentMethod,amount, paymentDate);
-                int customerID = paymentController.checkOrAddCustomer(con,paymentModel.getCustomerName(), paymentModel.getCustomerEmail(), paymentModel.getCustomerPhone(), paymentModel.getCustomerAddress());
+                String customerID = paymentController.checkOrAddCustomer(con,paymentModel.getCustomerName(), paymentModel.getCustomerEmail(), paymentModel.getCustomerPhone(), paymentModel.getCustomerAddress());
                 int tourID = paymentController.getTourIdByName(con, paymentModel.getTourName());
                 int packageID = paymentController.getPackageIdByTourID(con,tourID);
-                int bookingID = paymentController.addBooking(con,customerID,tourID, packageID, 2 ,Double.valueOf(paymentModel.getAmount()), status);
-                String transaction = paymentController.generateTransactionId(con);
+                String bookingID = paymentController.addBooking(con,customerID,tourID, packageID, 2 ,Double.valueOf(paymentModel.getAmount()), status);
+                String transaction = paymentController.generateTransactionId();
 
-                boolean isAdded = paymentController.addPayment(con,bookingID,customerID,transaction,String.valueOf(paymentModel.getPaymentDate()), paymentModel.getPaymentMethod(), paymentModel.getPaymentStatus(),Double.parseDouble(paymentModel.getAmount()));
-
+                boolean isAdded = paymentController.addPayment(con,bookingID,customerID,transaction,String.valueOf(paymentModel.getPaymentDate()), paymentModel.getPaymentMethod(), paymentModel.getPaymentStatus(),Double.parseDouble(paymentModel.getAmount()));System.out.println("IS ADDED" + isAdded);
                 if(isAdded){
                     JOptionPane.showMessageDialog(PaymentUpdate.this, "Cập nhập thành công!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     paymentView.loadCustomerData();
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(PaymentUpdate.this, "Cập nhập thất bại!", "Fail", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(PaymentUpdate.this, "Cập nhập thất bại 1!", "Fail", JOptionPane.ERROR_MESSAGE);
                 }
 
             } else {
@@ -508,7 +504,7 @@ public class PaymentUpdate extends javax.swing.JFrame {
                     paymentView.loadCustomerData();
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(PaymentUpdate.this, "Cập nhập thất bại!", "Fail", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(PaymentUpdate.this, "Cập nhập thất bại! 2", "Fail", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
